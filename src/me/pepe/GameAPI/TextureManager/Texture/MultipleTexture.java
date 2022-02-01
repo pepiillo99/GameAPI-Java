@@ -4,9 +4,10 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Set;
 
+import me.pepe.GameAPI.GameAPI;
 import me.pepe.GameAPI.TextureManager.TextureDistance;
-import me.pepe.GameAPI.Utils.Callback;
 import me.pepe.GameAPI.Utils.SubTextureCoords;
+import pepiillo99.mc.minesound.net.DatabaseAPI.Utils.Callback;
 
 public class MultipleTexture extends Texture {
 	private HashMap<SubTextureCoords, Boolean> partOfTextureLoadeds = new HashMap<SubTextureCoords, Boolean>();
@@ -57,7 +58,7 @@ public class MultipleTexture extends Texture {
 			System.out.println(stc.getName() + " cargada");
 		} else {
 			System.out.println("cargando imagen y recortando");
-			loadDistance(td, new Callback<Boolean>() {
+			loadDistance(GameAPI.getInstance().getTextureManager(), td, new Callback<Boolean>() {
 				@Override
 				public void done(Boolean result, Exception exception) {
 					if (result) {

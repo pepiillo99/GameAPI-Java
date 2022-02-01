@@ -4,8 +4,6 @@ import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferStrategy;
-import java.util.Collection;
-import java.util.HashMap;
 
 import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.Screen.Screen;
@@ -20,7 +18,6 @@ public class Game extends Canvas implements Runnable {
 	private Windows windows;
 	private ScreenManager screenManager;
 	private int objectID = 0;
-	private HashMap<Integer, GameObject> objects = new HashMap<Integer, GameObject>();
 	private int tps = 1;
 	private int fps = 1;
 	private int maxTPS = 20;
@@ -49,9 +46,6 @@ public class Game extends Canvas implements Runnable {
 		}
 	}
 	private void tick() {
-		for (GameObject object : getObjects()) {
-			object.internalTick();
-		}
 		if (getScreen() != null) {
 			getScreen().tick();
 		}
@@ -65,47 +59,45 @@ public class Game extends Canvas implements Runnable {
 			createBufferStrategy(3);
 			return;
 		}
-		Graphics g = bs.getDrawGraphics();
-		g.setColor(getScreen().getBackground());
-		g.fillRect(0, 0, getWindows().getXToPaint(), getWindows().getYToPaint());
-		//System.out.println(System.currentTimeMillis() - start + "ms en dibujar el rectangulo de fondo");
-		if (screenLoaded) {
-			getScreen().buildLevel(g);
-			//System.out.println(System.currentTimeMillis() - start + "ms en dibujar level");
-			for (GameObject object : getObjects()) {
-				object.render(g);
-			}
-		} else {
-			if (!screenLoading) {
-				screenLoading = true;
-				new Thread() {
-					@Override
-					public void run() {
-						int amount = 0;
-						while (amount < 5) {
-							getScreen().buildLevel(g);
-							//System.out.println(System.currentTimeMillis() - start + "ms en dibujar level en el thread");
-							for (GameObject object : getObjects()) {
-								object.render(g);
+		try {
+			Graphics g = bs.getDrawGraphics();
+			g.setColor(getScreen().getBackground());
+			g.fillRect(0, 0, getWindows().getActualX(), getWindows().getActualY());
+			//System.out.println(System.currentTimeMillis() - start + "ms en dibujar el rectangulo de fondo");
+			if (screenLoaded) {
+				getScreen().buildLevel(g);
+				//System.out.println(System.currentTimeMillis() - start + "ms en dibujar level");
+			} else {
+				if (!screenLoading) {
+					screenLoading = true;
+					new Thread() {
+						@Override
+						public void run() {
+							int amount = 0;
+							while (amount < 5) {
+								getScreen().buildLevel(g);
+								//System.out.println(System.currentTimeMillis() - start + "ms en dibujar level en el thread");
+								try {
+									sleep(5);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								amount++;
 							}
-							try {
-								sleep(5);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							amount++;
+							screenLoaded = true;
 						}
-						screenLoaded = true;
-					}
-				}.start();
+					}.start();
+				}
 			}
+			//System.out.println(System.currentTimeMillis() - start + "ms en dibujar todo");
+			g.dispose();
+			//System.out.println(System.currentTimeMillis() - start + "ms en dispose");
+			bs.show();
+			//System.out.println(System.currentTimeMillis() - start + "ms en el fin del primer render");
+		} catch (IllegalStateException ex) {
+			System.out.println("error al renderizar");
 		}
-		//System.out.println(System.currentTimeMillis() - start + "ms en dibujar todo");
-		g.dispose();
-		//System.out.println(System.currentTimeMillis() - start + "ms en dispose");
-		bs.show();
-		//System.out.println(System.currentTimeMillis() - start + "ms en el fin del primer render");
 	}
 	public Screen getScreen() {
 		return screenManager.getScreen(screen);
@@ -113,12 +105,23 @@ public class Game extends Canvas implements Runnable {
 	public void setScreen(String screen) {
 		if (screenManager.getScreen(screen) != null) {
 			if (getScreen() != null) {
+				getScreen().onQuit();
+				for (GameObject object : getScreen().getGameObjects()) {
+					object.onQuitScreen();
+				}
 				this.removeMouseListener(getScreen().getMouseInput());
 				this.removeMouseWheelListener(getScreen().getMouseInput());
 				this.removeMouseMotionListener(getScreen().getMouseInput());
 				this.removeKeyListener(getScreen().getKeyInput());
+				if (getScreen().getMouseInput() != null) {
+					getScreen().getMouseInput().restart();
+				}
 			}
 			this.screen = screen;
+			getScreen().onOpen();
+			for (GameObject object : getScreen().getGameObjects()) {
+				object.onScreen();
+			}
 			this.addMouseListener(getScreen().getMouseInput());
 			this.addMouseMotionListener(getScreen().getMouseInput());
 			this.addMouseWheelListener(getScreen().getMouseInput());
@@ -183,8 +186,8 @@ public class Game extends Canvas implements Runnable {
 			}
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				System.out.println("FPS: " + frames);
-				System.out.println("Ticks: " + tick);
+				//System.out.println("FPS: " + frames);
+				//System.out.println("Ticks: " + tick);
 				fps = frames;
 				tps = tick;
 				tick = 0;
@@ -196,25 +199,6 @@ public class Game extends Canvas implements Runnable {
 	public int getNextObjectID() {
 		return objectID++;
 	}
-	public Collection<GameObject> getObjects() {
-		return objects.values();
-	}
-	public GameObject getObject(int id) {
-		if (objects.containsKey(id)) {
-			return objects.get(id);
-		} else {
-			return null;
-		}
-	}
-	public void addObject(GameObject object) {
-		objects.put(object.getID(), object);
-	}
-	public void removeObject(int id) {
-		objects.remove(id);
-	}
-	public void removeObject(GameObject object) {
-		objects.remove(object.getID());
-	}
 	public int getTPS() {
 		return tps;
 	}
@@ -223,6 +207,9 @@ public class Game extends Canvas implements Runnable {
 	}
 	public int getMaxFPS() {
 		return (int) maxFPS;
+	}
+	public void setMaxFPS(int maxFPS) {
+		this.maxFPS = maxFPS;
 	}
 	public int getMaxTPS() {
 		return (int) maxTPS;

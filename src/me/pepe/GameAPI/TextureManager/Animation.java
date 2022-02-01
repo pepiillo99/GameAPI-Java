@@ -27,10 +27,10 @@ public abstract class Animation {
 	public void render(Graphics g) {
 		if (!finish) {
 			if (textures[pos].isTextureDistanceLoaded(textures[pos].getMaxTextureDistance())) {
-				g.drawImage(textures[pos].getTexture(textures[pos].getMaxTextureDistance()), loc.getX(), loc.getY(), dim.getX(), dim.getY(), null, null);
+				g.drawImage(textures[pos].getTexture(textures[pos].getMaxTextureDistance()), (int) loc.getX(), (int) loc.getY(), (int) dim.getX(), (int) dim.getY(), null, null);
 			} else {
 				g.setColor(Utils.random.nextBoolean() ? Color.WHITE : Color.BLACK);
-				g.fillRect(loc.getX(), loc.getY(), dim.getX(), dim.getY());
+				g.fillRect((int) loc.getX(), (int) loc.getY(), (int) dim.getX(), (int) dim.getY());
 			}
 			if (timer - System.currentTimeMillis() <= 0) {
 				timer = durationPerFotogram + System.currentTimeMillis();

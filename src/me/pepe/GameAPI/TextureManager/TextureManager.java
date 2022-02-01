@@ -10,7 +10,7 @@ import me.pepe.GameAPI.Utils.LoadAction;
 public class TextureManager {
 	private HashMap<String, Texture> textures = new HashMap<String, Texture>();
 	private ExecutorService loadQueue = Executors.newSingleThreadExecutor();
-	
+
 	public Texture getTexture(String textureName) {
 		return textures.get(textureName);
 	}

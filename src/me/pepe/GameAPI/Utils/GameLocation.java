@@ -1,16 +1,16 @@
 package me.pepe.GameAPI.Utils;
 
 public class GameLocation {
-	private int x;
-	private int y;
-	public GameLocation(int x, int y) {
+	private double x;
+	private double y;
+	public GameLocation(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
-	public int getX() {
+	public double getX() {
 		return x;
 	}
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 }

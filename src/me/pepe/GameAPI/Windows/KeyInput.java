@@ -6,10 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class KeyInput extends KeyAdapter {
+	private Windows windows;
 	private List<Integer> pressedKeys = new ArrayList<Integer>();
 	public abstract void tick();
 	public abstract void onKeyPressed(int key);
 	public abstract void onKeyReleased(int key);
+	public KeyInput(Windows windows) {
+		this.windows = windows;
+	}
+	public KeyInput() {}
 	public boolean checkIsPressed(int key) {
 		return pressedKeys.contains(key);
 	}
@@ -23,6 +28,9 @@ public abstract class KeyInput extends KeyAdapter {
 	}
 	public void keyPressed(KeyEvent event) {
 		int key = event.getKeyCode();
+		if (windows != null && windows.canFullScreen() && key == 122) {
+			windows.setFullScreen(!windows.isFullScreen());
+		}
 		addPressedKey(key);
 		onKeyPressed(key);
 	}

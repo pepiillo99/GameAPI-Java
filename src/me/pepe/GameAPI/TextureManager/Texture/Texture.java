@@ -6,10 +6,10 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
-import me.pepe.GameAPI.GameAPI;
 import me.pepe.GameAPI.TextureManager.TextureDistance;
-import me.pepe.GameAPI.Utils.Callback;
+import me.pepe.GameAPI.TextureManager.TextureManager;
 import me.pepe.GameAPI.Utils.LoadAction;
+import pepiillo99.mc.minesound.net.DatabaseAPI.Utils.Callback;
 
 public abstract class Texture {
 	private String name;
@@ -69,25 +69,29 @@ public abstract class Texture {
 		return null;
 	}
 	public abstract void onLoad(TextureDistance distance);
-	public void loadDistance(TextureDistance distance, Callback<Boolean> callback) {
+	public void loadDistance(TextureManager textureManager, TextureDistance distance, Callback<Boolean> callback) {
 		if (hasTextureDistance(distance)) {
-			GameAPI.getInstance().getTextureManager().load(this, new LoadAction() {
-				@Override
-				public boolean execute() {
-					try {
-						BufferedImage image = ImageIO.read(getClass().getClassLoader().getResourceAsStream(path.get(distance)));
-						dist.put(distance, image);
-						callback.done(true, null);
-						onLoad(distance);
-						System.out.println("textura " + name + " cargada");
-						return true;
-					} catch (IOException e) {
-						callback.done(false, e);
-					}
-					callback.done(false, null);
-					return false;
-				}				
-			});
+			if (!isTextureDistanceLoaded(distance)) {
+				textureManager.load(this, new LoadAction() {
+					@Override
+					public boolean execute() {
+						try {
+							BufferedImage image = ImageIO.read(getClass().getClassLoader().getResourceAsStream(path.get(distance)));
+							dist.put(distance, image);
+							callback.done(true, null);
+							onLoad(distance);
+							System.out.println("textura " + name + " cargada");
+							return true;
+						} catch (IOException e) {
+							callback.done(false, e);
+						}
+						callback.done(false, null);
+						return false;
+					}				
+				});
+			} else {
+				callback.done(true, null);
+			}
 		} else {
 			System.out.println("Distancia " + distance.name() + " no registrada");
 		}

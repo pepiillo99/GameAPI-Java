@@ -1,15 +1,15 @@
 package me.pepe.GameAPI.Utils;
 
 public class ObjectDimension {
-	private int x, y;
-	public ObjectDimension(int x, int y) {
+	private double x, y;
+	public ObjectDimension(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
-	public int getX() {
+	public double getX() {
 		return x;
 	}
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 }
