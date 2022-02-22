@@ -6,8 +6,8 @@ import java.util.Set;
 
 import me.pepe.GameAPI.GameAPI;
 import me.pepe.GameAPI.TextureManager.TextureDistance;
+import me.pepe.GameAPI.Utils.Callback;
 import me.pepe.GameAPI.Utils.SubTextureCoords;
-import pepiillo99.mc.minesound.net.DatabaseAPI.Utils.Callback;
 
 public class MultipleTexture extends Texture {
 	private HashMap<SubTextureCoords, Boolean> partOfTextureLoadeds = new HashMap<SubTextureCoords, Boolean>();

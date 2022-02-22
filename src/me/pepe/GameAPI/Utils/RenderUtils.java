@@ -128,17 +128,51 @@ public class RenderUtils {
 		}
 	}
 	public static void drawString(Windows windows, String s, Font font, double realX, double realY, Graphics g, Color color) {
+		drawString(windows, s, font, realX, realY, g, color, null);
+	}
+	public static void drawString(Windows windows, String s, Font font, double realX, double realY, Graphics g, Color color, RenderLimits limits) {
+		int x;
+		int y;
+		if (limits != null) {
+			x = limits.getSizeX();
+			y = limits.getSizeY();
+		} else {
+			if (windows != null) {
+				x = windows.getActualXToPaint();
+				y = windows.getActualYToPaint();
+			} else {
+				x = 0;
+				y = 0;
+			}
+		}
 		g.setColor(color);
 		g.setFont(font);
-		g.drawString(s, (int) (realX * windows.getActualXToPaint() / 100), (int) (realY * windows.getActualYToPaint() / 100));
+		g.drawString(s, (int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0));
 	}
 	public static void drawCenteredString(Windows windows, String s, Font font, double realX, double realY, Graphics g, Color color) {
+		drawCenteredString(windows, s, font, realX, realY, g, color, null);
+	}
+	public static void drawCenteredString(Windows windows, String s, Font font, double realX, double realY, Graphics g, Color color, RenderLimits limits) {
+		int x;
+		int y;
+		if (limits != null) {
+			x = limits.getSizeX();
+			y = limits.getSizeY();
+		} else {
+			if (windows != null) {
+				x = windows.getActualXToPaint();
+				y = windows.getActualYToPaint();
+			} else {
+				x = 0;
+				y = 0;
+			}
+		}
 	    FontMetrics metrics = g.getFontMetrics(font);
-	    int x = (int) ((realX * windows.getActualXToPaint() / 100) + ((metrics.getHeight() / 6) - metrics.stringWidth(s)) / 2);
-	    int y = (int) ((realY * windows.getActualYToPaint() / 100) + (((metrics.getHeight() / 6) - metrics.getHeight()) / 2) + (metrics.getAscent() * 1.1));
+	    x = (int) (realX * x / 100) + ((metrics.getHeight() / 6) - metrics.stringWidth(s)) / 2;
+	    y = (int) ((realY * y / 100) + (((metrics.getHeight() / 6) - metrics.getHeight()) / 2) + (metrics.getAscent() * 1.1));
 		g.setColor(color);
 		g.setFont(font);
-		g.drawString(s, x, y);
+		g.drawString(s, x + (limits != null ? limits.getX() : 0), y + (limits != null ? limits.getY() : 0));
 	}
 	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf) {
 		drawImage(windows, realX, realY, realHeight, realWight, g, buf, ResizeType.NORMAL, null);

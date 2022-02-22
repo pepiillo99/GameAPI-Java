@@ -4,7 +4,7 @@ import me.pepe.GameAPI.TextureManager.TextureManager;
 import me.pepe.GameAPI.Utils.FontManager;
 
 public class GameAPI {
-	public TextureManager textureManager;
+	private TextureManager textureManager;
 	private FontManager fontManager;
 	private static GameAPI instance;
 	public GameAPI() {

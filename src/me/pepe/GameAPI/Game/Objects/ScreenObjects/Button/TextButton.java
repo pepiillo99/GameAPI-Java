@@ -37,10 +37,10 @@ public abstract class TextButton extends Button {
 			Utils.drawCenteredString(g, text, new Rectangle(getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY()), /*Dymos.getInstance().getFontManager().getFont("Airborne").deriveFont(Font.PLAIN, isOver() ? 50 : 45)*/new Font("Aria", Font.PLAIN, (int)(getActualDimensionY()/1.35)));
 		}
 	}
-	public void setBoxColor(Color color) {
+	public void setLetterColor(Color color) {
 		letterColor = new int[] {color.getRed(), color.getGreen(), color.getBlue()};
 	}
-	public void setLetterColor(Color color) {
+	public void setBoxColor(Color color) {
 		boxColor = new int[] {color.getRed(), color.getGreen(), color.getBlue()};
 	}
 }

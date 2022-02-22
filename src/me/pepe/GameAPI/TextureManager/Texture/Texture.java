@@ -6,10 +6,11 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import me.pepe.GameAPI.GameAPI;
 import me.pepe.GameAPI.TextureManager.TextureDistance;
 import me.pepe.GameAPI.TextureManager.TextureManager;
+import me.pepe.GameAPI.Utils.Callback;
 import me.pepe.GameAPI.Utils.LoadAction;
-import pepiillo99.mc.minesound.net.DatabaseAPI.Utils.Callback;
 
 public abstract class Texture {
 	private String name;

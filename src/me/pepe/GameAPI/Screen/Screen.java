@@ -88,7 +88,7 @@ public abstract class Screen {
 		int cursor = this.cursor;
 		ArrayList<GameObject> objects_copy = (ArrayList<GameObject>) ((ArrayList<GameObject>) objects).clone();
 		for (GameObject object : objects_copy) {
-			object.tick();
+			object.internalTick();
 			if (this.cursor == Cursor.DEFAULT_CURSOR && object.getCursor() != Cursor.DEFAULT_CURSOR) {
 				cursor = object.getCursor();
 			}
@@ -96,7 +96,7 @@ public abstract class Screen {
 				Menu menu = (Menu) object;
 				ArrayList<GameObject> objects_menu_copy = (ArrayList<GameObject>) ((ArrayList<GameObject>) menu.getGameObjects()).clone();
 				for (GameObject menu_object : objects_menu_copy) {
-					menu_object.tick();
+					menu_object.internalTick();
 					if (this.cursor == Cursor.DEFAULT_CURSOR && menu_object.getCursor() != Cursor.DEFAULT_CURSOR) {
 						cursor = menu_object.getCursor();
 					}
