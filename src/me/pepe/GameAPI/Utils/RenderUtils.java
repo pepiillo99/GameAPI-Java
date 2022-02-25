@@ -92,16 +92,25 @@ public class RenderUtils {
 			g.fillRect((int) (((realX) * x / 100) - (realHeight / 2)), (int) (((realY) * y / 100) - (realWight / 2)), (int) (realHeight), (int) (realWight));
 		}
 	}
-	public static void drawRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color) {
-		drawRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null);
+	public static void drawRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color) {
+		drawRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null, RenderType.PORCENT);
 	}
-	public static void drawRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType) {
-		drawRect(windows, realX, realY, realHeight, realWight, g, color, resizeType, null);
+	public static void drawRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderType renderType) {
+		drawRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null, renderType);
 	}
-	public static void drawRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, RenderLimits limits) {
-		drawRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits);
+	public static void drawRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits, RenderType renderType) {
+		drawRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, renderType);
 	}
-	public static void drawRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits) {
+	public static void drawRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType) {
+		drawRect(windows, realX, realY, realHeight, realWight, g, color, resizeType, null, RenderType.PORCENT);
+	}
+	public static void drawRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits) {
+		drawRect(windows, realX, realY, realHeight, realWight, g, color, resizeType, limits, RenderType.PORCENT);
+	}
+	public static void drawRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
+		drawRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
+	}
+	public static void drawRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
 		int x;
 		int y;
 		if (limits != null) {
@@ -117,14 +126,18 @@ public class RenderUtils {
 			}
 		}
 		g.setColor(color);
-		if (resizeType.equals(ResizeType.NORMAL)) {
-			g.drawRect((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y/ 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100));
-		} else if (resizeType.equals(ResizeType.ONLY_Y)) {
-			g.drawRect((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (x) / 100));
-		} else if (resizeType.equals(ResizeType.ONLY_X)) {
-			g.drawRect((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y) / 100));
-		} else if (resizeType.equals(ResizeType.NONE)) {
-			g.drawRect((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100));
+		if (renderType.equals(RenderType.PIXEL)) {
+			g.drawRect((int) realX + (limits != null ? limits.getX() : 0), (int) realY + (limits != null ? limits.getY() : 0), (int) realHeight, (int) realWight);
+		} else if (renderType.equals(RenderType.PORCENT)) {
+	 		if (resizeType.equals(ResizeType.NORMAL)) {
+				g.drawRect((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y/ 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100));
+			} else if (resizeType.equals(ResizeType.ONLY_Y)) {
+				g.drawRect((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (x) / 100));
+			} else if (resizeType.equals(ResizeType.ONLY_X)) {
+				g.drawRect((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y) / 100));
+			} else if (resizeType.equals(ResizeType.NONE)) {
+				g.drawRect((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100));
+			}
 		}
 	}
 	public static void drawString(Windows windows, String s, Font font, double realX, double realY, Graphics g, Color color) {
@@ -175,15 +188,24 @@ public class RenderUtils {
 		g.drawString(s, x + (limits != null ? limits.getX() : 0), y + (limits != null ? limits.getY() : 0));
 	}
 	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf) {
-		drawImage(windows, realX, realY, realHeight, realWight, g, buf, ResizeType.NORMAL, null);
+		drawImage(windows, realX, realY, realHeight, realWight, g, buf, ResizeType.NORMAL, null, RenderType.PORCENT);
+	}
+	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf, RenderType renderType) {
+		drawImage(windows, realX, realY, realHeight, realWight, g, buf, ResizeType.NORMAL, null, renderType);
+	}
+	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf, RenderLimits limits, RenderType renderType) {
+		drawImage(windows, realX, realY, realHeight, realWight, g, buf, ResizeType.NORMAL, limits, renderType);
 	}
 	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf, ResizeType resizeType) {
-		drawImage(windows, realX, realY, realHeight, realWight, g, buf, resizeType, null);
-	}
-	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf, RenderLimits limits) {
-		drawImage(windows, realX, realY, realHeight, realWight, g, buf, ResizeType.NORMAL, limits);
+		drawImage(windows, realX, realY, realHeight, realWight, g, buf, resizeType, null, RenderType.PORCENT);
 	}
 	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf, ResizeType resizeType, RenderLimits limits) {
+		drawImage(windows, realX, realY, realHeight, realWight, g, buf, resizeType, limits, RenderType.PORCENT);
+	}
+	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf, RenderLimits limits) {
+		drawImage(windows, realX, realY, realHeight, realWight, g, buf, ResizeType.NORMAL, limits, RenderType.PORCENT);
+	}
+	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
 		int x;
 		int y;
 		if (limits != null) {
@@ -198,14 +220,18 @@ public class RenderUtils {
 				y = 0;
 			}
 		}
-		if (resizeType.equals(ResizeType.NORMAL)) {
-			g.drawImage(buf, (int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y/ 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100), null);
-		} else if (resizeType.equals(ResizeType.ONLY_Y)) {
-			g.drawImage(buf, (int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (x) / 100), null);
-		} else if (resizeType.equals(ResizeType.ONLY_X)) {
-			g.drawImage(buf, (int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y) / 100), null);
-		} else if (resizeType.equals(ResizeType.NONE)) {
-			g.drawImage(buf, (int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100), null);
+		if (renderType.equals(RenderType.PIXEL)) {
+			g.drawImage(buf, (int) realX + (limits != null ? limits.getX() : 0), (int) realY + (limits != null ? limits.getY() : 0), (int) realHeight, (int) realWight, null);
+		} else if (renderType.equals(RenderType.PORCENT)) {
+			if (resizeType.equals(ResizeType.NORMAL)) {
+				g.drawImage(buf, (int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y/ 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100), null);
+			} else if (resizeType.equals(ResizeType.ONLY_Y)) {
+				g.drawImage(buf, (int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (x) / 100), null);
+			} else if (resizeType.equals(ResizeType.ONLY_X)) {
+				g.drawImage(buf, (int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y) / 100), null);
+			} else if (resizeType.equals(ResizeType.NONE)) {
+				g.drawImage(buf, (int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100), null);
+			}
 		}
 	}
 }
