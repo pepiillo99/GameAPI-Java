@@ -12,6 +12,7 @@ import me.pepe.GameAPI.Game.Objects.ScreenObjects.SelectBox;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.TextBox;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Button.Button;
 import me.pepe.GameAPI.Screen.Screen;
+import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Windows.Buttons.MouseButtons;
 
 
@@ -39,6 +40,8 @@ public abstract class MouseInput extends MouseAdapter {
 	public abstract void onWheelMoved(MouseButtons mouseButton);
 	public abstract void onButtonPressed(MouseButtons mouseButton);
 	public abstract void onButtonReleased(MouseButtons mouseButton);
+	public void onMouseMoved() {}
+	public void onMouseDragged(int difX, int difY) {}
 	private void addPressedButton(int button)  {
 		if (!pressedButtons.contains(button)) {
 			pressedButtons.add(button);
@@ -55,10 +58,26 @@ public abstract class MouseInput extends MouseAdapter {
     	if (id == 1) {
     		id = -2;
     	}
+		for (GameObject object : screen.getGameObjects()) {
+	    	if (object instanceof Menu) {
+				Menu menu = (Menu) object;
+				if (menu.isOver()) {
+					menu.setStartRender(new GameLocation(menu.getStartRender().getX(), menu.getStartRender().getY() + (MouseButtons.getClickedButton(id) == MouseButtons.WHEEL_DOWN ? -10 : 10)));
+				}
+			}
+		}
     	onWheelMoved(MouseButtons.getClickedButton(id));
     }
    public void mousePressed(MouseEvent e) {
 	   addPressedButton(e.getButton());
+		for (GameObject object : screen.getGameObjects()) {
+			if (object instanceof Menu) {
+				Menu menu = (Menu) object;
+				if (menu.isOver()) {
+					menu.setClicked(true);
+				}
+			}
+		}	
 	   onButtonPressed(MouseButtons.getClickedButton(e.getButton()));
    }
    public void mouseReleased(MouseEvent e) {
@@ -82,6 +101,7 @@ public abstract class MouseInput extends MouseAdapter {
 			} else if (object instanceof Menu) {
 				Menu menu = (Menu) object;
 				if (menu.isOver()) {
+					menu.setClicked(false);
 					menu.registerClick(x - menu.getActualX(), y - menu.getActualY());
 				}
 			}
@@ -93,12 +113,24 @@ public abstract class MouseInput extends MouseAdapter {
 	   this.xOnScreen = e.getXOnScreen();
 	   this.y = e.getY();
 	   this.yOnScreen = e.getYOnScreen();
+	   onMouseMoved();
    }
    public void mouseDragged(MouseEvent e) { // cuando el raton se está arrastrando (moverse pulsado no ejecuta 'mouseMoved') ;(
+	   int diffX = x - e.getX();
+	   int diffY = y - e.getY();
 	   this.x = e.getX();
 	   this.xOnScreen = e.getXOnScreen();
 	   this.y = e.getY();
 	   this.yOnScreen = e.getYOnScreen();
+		for (GameObject object : screen.getGameObjects()) {
+	    	if (object instanceof Menu) {
+				Menu menu = (Menu) object;
+				if (menu.isClicked()) {
+					menu.setStartRender(new GameLocation(menu.getStartRender().getX() - diffX, menu.getStartRender().getY() - diffY));
+				}
+			}
+		}
+	   onMouseDragged(diffX, diffY);
    }
    public boolean isPressed(MouseButtons mouseButton) {
 	   return pressedButtons.contains(mouseButton.getID());

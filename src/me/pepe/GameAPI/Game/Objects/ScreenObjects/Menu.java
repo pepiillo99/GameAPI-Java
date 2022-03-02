@@ -20,6 +20,9 @@ public abstract class Menu extends GameObject {
 	private RenderLimits menuRenderLimits;
 	private List<GameObject> objects = new ArrayList<GameObject>();
 	private List<Animation> animations = new ArrayList<Animation>();
+	private GameLocation startRender = new GameLocation(0, 0);
+	private int maxMoveX, minMoveX, maxMoveY, minMoveY = 0;
+	private boolean clicked = false;
 	public Menu(GameLocation gameLocation, Game game, ObjectDimension dimension) {
 		this(gameLocation, game, dimension, null);
 	}
@@ -60,10 +63,33 @@ public abstract class Menu extends GameObject {
 	public RenderLimits getMenuRenderLimits() {
 		return menuRenderLimits;
 	}
+	public GameLocation getStartRender() {
+		return startRender;
+	}
+	public void setStartRender(GameLocation startRender) {
+		double x = startRender.getX();
+		double y = startRender.getY();
+		if (startRender.getX() < maxMoveX) {
+			x = maxMoveX;
+		} else if (startRender.getX() > minMoveX) {
+			x = minMoveX;
+		}
+		if (startRender.getY() < maxMoveY) {
+			y = maxMoveY;
+		} else if (startRender.getY() > minMoveY) {
+			y = minMoveY;
+		}
+		this.startRender = new GameLocation(x, y);
+	}
+	public void setMoveLimits(int maxMoveX, int minMoveX, int maxMoveY, int minMoveY) {
+		this.maxMoveX = maxMoveX;
+		this.minMoveX = minMoveX;
+		this.maxMoveY = maxMoveY;
+		this.minMoveY = minMoveY;
+	}
 	private BufferedImage internalBuild(int width, int height) {
 		BufferedImage image = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = image.createGraphics();
-		g.fillRect(0, 0, width-1, height-1);
 		build(g);
 		ArrayList<GameObject> objects_copy = (ArrayList<GameObject>) ((ArrayList<GameObject>) objects).clone();
 		for (GameObject object : objects_copy) {
@@ -74,7 +100,12 @@ public abstract class Menu extends GameObject {
 			anim.render(g);
 		}
 		g.dispose();
-		return image;
+		BufferedImage finalImage = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2 = finalImage.createGraphics();
+		g2.fillRect(0, 0, width-1, height-1);
+		g2.drawImage(image, 0 + ((int) startRender.getX()), 0 + ((int) startRender.getY()), width <= 0 ? 1 : width, height <= 0 ? 1 : height, null);
+		g.dispose();
+		return finalImage;
 	}
 	public abstract void build(Graphics g);
 	public int getActualX() {
@@ -121,6 +152,12 @@ public abstract class Menu extends GameObject {
 	}
 	public boolean isOver() {
 		return over;
+	}
+	public boolean isClicked() {
+		return clicked;
+	}
+	public void setClicked(boolean clicked) {
+		this.clicked = clicked;
 	}
 	public void registerClick(int x, int y) {
 		onClick(x, y);

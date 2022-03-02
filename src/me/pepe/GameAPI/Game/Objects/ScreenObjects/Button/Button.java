@@ -35,7 +35,7 @@ public abstract class Button extends GameObject {
 	public void tick() {
 		boolean newover = false;
 		if (isOnMenu()) {
-			newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+			newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getActualX() + getMenu().getStartRender().getX()), (int) (getActualY() + getMenu().getStartRender().getY()), getActualDimensionX(), getActualDimensionY());
 		} else {
 			newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
 		}
