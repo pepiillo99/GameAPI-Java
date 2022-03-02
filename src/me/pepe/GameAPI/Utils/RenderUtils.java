@@ -57,16 +57,25 @@ public class RenderUtils {
 			}
 		}
 	}
-	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color) {
-		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null);
+	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color) {
+		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null, RenderType.PORCENT);
 	}
-	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType) {
-		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, resizeType, null);
+	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderType renderType) {
+		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null, renderType);
 	}
-	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, RenderLimits limits) {
-		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits);
+	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits, RenderType renderType) {
+		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, renderType);
 	}
-	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits) {
+	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType) {
+		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, resizeType, null, RenderType.PORCENT);
+	}
+	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits) {
+		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, resizeType, limits, RenderType.PORCENT);
+	}
+	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
+		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
+	}
+	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
 		int x;
 		int y;
 		if (limits != null) {
@@ -82,14 +91,114 @@ public class RenderUtils {
 			}
 		}
 		g.setColor(color);
-		if (resizeType.equals(ResizeType.NORMAL)) {
-			g.fillRect((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100));
-		} else if (resizeType.equals(ResizeType.ONLY_Y)) {
-			g.fillRect((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (x) / 100));
-		} else if (resizeType.equals(ResizeType.ONLY_X)) {
-			g.fillRect((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y) / 100));
-		} else if (resizeType.equals(ResizeType.NONE)) {
-			g.fillRect((int) (((realX) * x / 100) - (realHeight / 2)), (int) (((realY) * y / 100) - (realWight / 2)), (int) (realHeight), (int) (realWight));
+		if (renderType.equals(RenderType.PIXEL)) {
+			g.fillRect((int) (realX + (limits != null ? limits.getX() : 0) - (realHeight / 2)), (int) (realY + (limits != null ? limits.getY() : 0) - (realWight / 2)), (int) realHeight, (int) realWight);
+		} else {
+			if (resizeType.equals(ResizeType.NORMAL)) {
+				g.fillRect((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100));
+			} else if (resizeType.equals(ResizeType.ONLY_Y)) {
+				g.fillRect((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (x) / 100));
+			} else if (resizeType.equals(ResizeType.ONLY_X)) {
+				g.fillRect((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y) / 100));
+			} else if (resizeType.equals(ResizeType.NONE)) {
+				g.fillRect((int) (((realX) * x / 100) - (realHeight / 2)), (int) (((realY) * y / 100) - (realWight / 2)), (int) (realHeight), (int) (realWight));
+			}
+		}
+	}
+	public static void fillOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color) {
+		fillOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null, RenderType.PORCENT);
+	}
+	public static void fillOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderType renderType) {
+		fillOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null, renderType);
+	}
+	public static void fillOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits, RenderType renderType) {
+		fillOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, renderType);
+	}
+	public static void fillOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType) {
+		fillOval(windows, realX, realY, realHeight, realWight, g, color, resizeType, null, RenderType.PORCENT);
+	}
+	public static void fillOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits) {
+		fillOval(windows, realX, realY, realHeight, realWight, g, color, resizeType, limits, RenderType.PORCENT);
+	}
+	public static void fillOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
+		fillOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
+	}
+	public static void fillOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
+		int x;
+		int y;
+		if (limits != null) {
+			x = limits.getSizeX();
+			y = limits.getSizeY();
+		} else {
+			if (windows != null) {
+				x = windows.getActualXToPaint();
+				y = windows.getActualYToPaint();
+			} else {
+				x = 0;
+				y = 0;
+			}
+		}
+		g.setColor(color);
+		if (renderType.equals(RenderType.PIXEL)) {
+			g.fillOval((int) realX + (limits != null ? limits.getX() : 0), (int) realY + (limits != null ? limits.getY() : 0), (int) realHeight, (int) realWight);
+		} else if (renderType.equals(RenderType.PORCENT)) {
+	 		if (resizeType.equals(ResizeType.NORMAL)) {
+				g.fillOval((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y/ 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100));
+			} else if (resizeType.equals(ResizeType.ONLY_Y)) {
+				g.fillOval((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (x) / 100));
+			} else if (resizeType.equals(ResizeType.ONLY_X)) {
+				g.fillOval((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y) / 100));
+			} else if (resizeType.equals(ResizeType.NONE)) {
+				g.fillOval((int) (realX * x / 100) + (limits != null ? limits.getX() : 0), (int) (realY * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100));
+			}
+		}
+	}
+	public static void fillCenteredOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color) {
+		fillCenteredOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null, RenderType.PORCENT);
+	}
+	public static void fillCenteredOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderType renderType) {
+		fillCenteredOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, null, renderType);
+	}
+	public static void fillCenteredOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits, RenderType renderType) {
+		fillCenteredOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, renderType);
+	}
+	public static void fillCenteredOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType) {
+		fillCenteredOval(windows, realX, realY, realHeight, realWight, g, color, resizeType, null, RenderType.PORCENT);
+	}
+	public static void fillCenteredOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits) {
+		fillCenteredOval(windows, realX, realY, realHeight, realWight, g, color, resizeType, limits, RenderType.PORCENT);
+	}
+	public static void fillCenteredOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
+		fillCenteredOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
+	}
+	public static void fillCenteredOval(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
+		int x;
+		int y;
+		if (limits != null) {
+			x = limits.getSizeX();
+			y = limits.getSizeY();
+		} else {
+			if (windows != null) {
+				x = windows.getActualXToPaint();
+				y = windows.getActualYToPaint();
+			} else {
+				x = 0;
+				y = 0;
+			}
+		}
+		g.setColor(color);
+		if (renderType.equals(RenderType.PIXEL)) {
+			g.fillOval((int) (realX + (limits != null ? limits.getX() : 0) - (realHeight / 2)), (int) (realY + (limits != null ? limits.getY() : 0) - (realWight / 2)), (int) realHeight, (int) realWight);
+		} else {
+			if (resizeType.equals(ResizeType.NORMAL)) {
+				g.fillOval((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y > x ? x : y) / 100));
+			} else if (resizeType.equals(ResizeType.ONLY_Y)) {
+				g.fillOval((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (x) / 100));
+			} else if (resizeType.equals(ResizeType.ONLY_X)) {
+				g.fillOval((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y) / 100));
+			} else if (resizeType.equals(ResizeType.NONE)) {
+				g.fillOval((int) (((realX) * x / 100) - (realHeight / 2)), (int) (((realY) * y / 100) - (realWight / 2)), (int) (realHeight), (int) (realWight));
+			}
 		}
 	}
 	public static void drawRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color) {

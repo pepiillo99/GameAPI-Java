@@ -20,8 +20,6 @@ public abstract class Menu extends GameObject {
 	private RenderLimits menuRenderLimits;
 	private List<GameObject> objects = new ArrayList<GameObject>();
 	private List<Animation> animations = new ArrayList<Animation>();
-	private GameLocation startRender = new GameLocation(0, 0);
-	private int maxMoveX, minMoveX, maxMoveY, minMoveY = 0;
 	public Menu(GameLocation gameLocation, Game game, ObjectDimension dimension) {
 		this(gameLocation, game, dimension, null);
 	}
@@ -62,12 +60,6 @@ public abstract class Menu extends GameObject {
 	public RenderLimits getMenuRenderLimits() {
 		return menuRenderLimits;
 	}
-	public GameLocation getStartRender() {
-		return startRender;
-	}
-	public void setStartRender(GameLocation startRender) {
-		this.startRender = startRender;
-	}
 	private BufferedImage internalBuild(int width, int height) {
 		BufferedImage image = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = image.createGraphics();
@@ -82,11 +74,7 @@ public abstract class Menu extends GameObject {
 			anim.render(g);
 		}
 		g.dispose();
-		BufferedImage finalImage = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics2D g2 = finalImage.createGraphics();
-		g2.drawImage(image, 0 + ((int) startRender.getX()), 0 + ((int) startRender.getY()), width <= 0 ? 1 : width, height <= 0 ? 1 : height, null);
-		g.dispose();
-		return finalImage;
+		return image;
 	}
 	public abstract void build(Graphics g);
 	public int getActualX() {
