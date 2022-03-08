@@ -155,6 +155,9 @@ public abstract class Screen {
 	public void restartAnimations() {
 		animations.clear();
 	}
+	public void restartObjects() {
+		objects.clear();
+	}
 	public boolean isTouch(GameLocation mouse, GameObject object) {
 		return isTouch(mouse, (int) object.getX(), (int) object.getY(), (int) object.getDimension().getX(), (int) object.getDimension().getY());
 	}

@@ -14,8 +14,8 @@ public abstract class GameObject {
 	protected double x;
 	protected double y;
 	private int id;
-	private int velX;
-	private int velY;
+	private double velX;
+	private double velY;
 	private boolean windowsPassable = true;
 	private ObjectDimension dimension;
 	private Rectangle hitBox;
@@ -47,16 +47,16 @@ public abstract class GameObject {
 	public void setY(int y) {
 		this.y = y;
 	}
-	public int getVelX() {
+	public double getVelX() {
 		return velX;
 	}
-	public int getVelY() {
+	public double getVelY() {
 		return velY;
 	}
-	public void setVelX(int velX) {
+	public void setVelX(double velX) {
 		this.velX = velX;
 	}
-	public void setVelY(int velY) {
+	public void setVelY(double velY) {
 		this.velY = velY;
 	}
 	protected void setMove(boolean move) {
@@ -83,15 +83,20 @@ public abstract class GameObject {
 	public boolean isCollision(GameObject object) {
 		return object.getHitBox().intersects(hitBox);
 	}
+	public boolean isCollision(Rectangle object) {
+		return object.intersects(hitBox);
+	}
 	public void internalTick() {
 		if (move) {
 			x += velX;
 			y += velY;
-			if (!windowsPassable) {
-				x = clamp((int) x, 0, game.getWindows().getXToPaint() - (int) dimension.getX());
-				y = clamp((int) y, 0, game.getWindows().getYToPaint() - (int) dimension.getY());
+			if (canMoveTo(x, y)) {
+				if (!windowsPassable) {
+					x = clamp((int) x, 0, game.getWindows().getXToPaint() - (int) dimension.getX());
+					y = clamp((int) y, 0, game.getWindows().getYToPaint() - (int) dimension.getY());
+				}
+				hitBox.setBounds((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
 			}
-			hitBox.setBounds((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
 		}
 		tick();
 	}
@@ -100,12 +105,8 @@ public abstract class GameObject {
 	}
 	public abstract void tick();
 	public abstract void render(Graphics g);
-	public void onScreen() {
-		
-	}
-	public void onQuitScreen() {
-		
-	}
+	public void onScreen() {}
+	public void onQuitScreen() {}
 	private int clamp(int var, int min, int max) {
 		if (var >= max) {
 			return var = max;
@@ -117,5 +118,14 @@ public abstract class GameObject {
 	}
 	public int getCursor() {
 		return Cursor.DEFAULT_CURSOR;
+	}
+	public boolean canMoveTo(double x, double y) {
+		return canMoveTo(new GameLocation(x, y));
+	}
+	public boolean canMoveTo(GameLocation gameLocation) {
+		return true;
+	}
+	public Rectangle simulateHitboxMove(double x, double y) {
+		return new Rectangle((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
 	}
 }
