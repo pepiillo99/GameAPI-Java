@@ -88,9 +88,9 @@ public abstract class GameObject {
 	}
 	public void internalTick() {
 		if (move) {
-			x += velX;
-			y += velY;
-			if (canMoveTo(x, y)) {
+			if (canMoveTo(x+velX, y+velY)) {
+				x += velX;
+				y += velY;
 				if (!windowsPassable) {
 					x = clamp((int) x, 0, game.getWindows().getXToPaint() - (int) dimension.getX());
 					y = clamp((int) y, 0, game.getWindows().getYToPaint() - (int) dimension.getY());

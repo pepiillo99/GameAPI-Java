@@ -39,4 +39,7 @@ public abstract class KeyInput extends KeyAdapter {
 		removePressedKey(key);
 		onKeyReleased(key);
 	}
+	public List<Integer> getKeyPresseds() {
+		return pressedKeys;
+	}
 }
