@@ -41,7 +41,7 @@ public abstract class Texture {
 		}
 		return null;
 	}
-	public void registerImage(TextureDistance distance, String paths) {
+	public boolean registerImage(TextureDistance distance, String paths) {
 		try {
 			long startLoad = System.currentTimeMillis();
 			BufferedImage image = ImageIO.read(getClass().getClassLoader().getResourceAsStream(paths));
@@ -49,13 +49,15 @@ public abstract class Texture {
 			if (image != null) {
 				path.put(distance, paths);
 				System.out.println("Imagen de textura " + name + " cargada en " + (finishLoad - startLoad) + "ms");
+				return true;
 			} else {
 				System.out.println("Error al coger " + paths);
 			}
 		} catch (IllegalArgumentException | IOException e) {
 			System.out.println("Error al coger " + paths);
 			//e.printStackTrace();
-		}		
+		}	
+		return false;
 	}
 	public boolean hasTextureDistance(TextureDistance distance) {
 		return path.containsKey(distance);

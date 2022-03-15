@@ -53,8 +53,7 @@ public abstract class Screen {
 		}
 		if (fRender.equals(FirstRender.BUILD)) {
 			paintLevel(g);
-			ArrayList<GameObject> objects_copy = (ArrayList<GameObject>) ((ArrayList<GameObject>) objects).clone();
-			for (GameObject object : objects_copy) {
+			for (GameObject object : getGameObjectClonned()) {
 				object.render(g);
 			}
 			ArrayList<Animation> animation_copy = (ArrayList<Animation>) ((ArrayList<Animation>) animations).clone();
@@ -62,8 +61,7 @@ public abstract class Screen {
 				anim.render(g);
 			}
 		} else {
-			ArrayList<GameObject> objects_copy = (ArrayList<GameObject>) ((ArrayList<GameObject>) objects).clone();
-			for (GameObject object : objects_copy) {
+			for (GameObject object : getGameObjectClonned()) {
 				object.render(g);
 			}
 			ArrayList<Animation> animation_copy = (ArrayList<Animation>) ((ArrayList<Animation>) animations).clone();
@@ -86,8 +84,7 @@ public abstract class Screen {
 			getKeyInput().tick();
 		}
 		int cursor = this.cursor;
-		ArrayList<GameObject> objects_copy = (ArrayList<GameObject>) ((ArrayList<GameObject>) objects).clone();
-		for (GameObject object : objects_copy) {
+		for (GameObject object : getGameObjectClonned()) {
 			object.internalTick();
 			if (this.cursor == Cursor.DEFAULT_CURSOR && object.getCursor() != Cursor.DEFAULT_CURSOR) {
 				cursor = object.getCursor();
@@ -131,6 +128,9 @@ public abstract class Screen {
 	}
 	public List<GameObject> getGameObjects() {
 		return objects;
+	}
+	public ArrayList<GameObject> getGameObjectClonned() {
+		return (ArrayList<GameObject>) ((ArrayList<GameObject>) objects).clone();
 	}
 	public void addGameObject(GameObject gameObject) {
 		if (!objects.contains(gameObject)) {

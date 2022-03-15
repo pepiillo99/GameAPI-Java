@@ -101,7 +101,7 @@ public class RenderUtils {
 			} else if (resizeType.equals(ResizeType.ONLY_X)) {
 				g.fillRect((int) ((realX - (realHeight / 2)) * x / 100) + (limits != null ? limits.getX() : 0), (int) ((realY - (realWight / 2)) * y / 100) + (limits != null ? limits.getY() : 0), (int) (realHeight * (y > x ? y : x) / 100), (int) (realWight * (y) / 100));
 			} else if (resizeType.equals(ResizeType.NONE)) {
-				g.fillRect((int) (((realX) * x / 100) - (realHeight / 2)), (int) (((realY) * y / 100) - (realWight / 2)), (int) (realHeight), (int) (realWight));
+				g.fillRect((int) (((realX) * x / 100) - (realHeight / 2)) + (limits != null ? limits.getX() : 0), (int) (((realY) * y / 100) - (realWight / 2)) + (limits != null ? limits.getY() : 0), (int) (realHeight), (int) (realWight));
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 package me.pepe.GameAPI.Windows;
 
 import java.awt.Canvas;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
