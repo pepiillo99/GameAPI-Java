@@ -214,6 +214,9 @@ public class Game extends Canvas implements Runnable {
 	public int getMaxTPS() {
 		return (int) maxTPS;
 	}
+	public void setMaxTPS(int maxTPS) {
+		this.maxTPS = maxTPS;
+	}
 	public ScreenManager getScreenManager() {
 		return screenManager;
 	}

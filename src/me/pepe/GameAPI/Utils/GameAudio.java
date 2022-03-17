@@ -56,4 +56,7 @@ public abstract class GameAudio extends Thread {
 	public void setOnBucle(boolean bucle) {
 		this.bucle = bucle;
 	}
+	public void stopSound() {
+		clip.stop();		
+	}
 }

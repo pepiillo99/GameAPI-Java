@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
-import me.pepe.GameAPI.GameAPI;
 import me.pepe.GameAPI.TextureManager.TextureDistance;
 import me.pepe.GameAPI.TextureManager.TextureManager;
 import me.pepe.GameAPI.Utils.Callback;
@@ -16,7 +15,8 @@ public abstract class Texture {
 	private String name;
 	private TextureDistance actual = null;
 	private HashMap<TextureDistance, String> path = new HashMap<TextureDistance, String>();
-	private HashMap<TextureDistance, BufferedImage> dist = new HashMap<TextureDistance, BufferedImage>();	
+	private HashMap<TextureDistance, BufferedImage> dist = new HashMap<TextureDistance, BufferedImage>();
+	private HashMap<String, TextureChanger> textureChageds = new HashMap<String, TextureChanger>();
 	public Texture(String name) {
 		this.name = name;
 	}
