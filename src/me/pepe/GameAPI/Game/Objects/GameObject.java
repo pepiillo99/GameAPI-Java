@@ -68,6 +68,9 @@ public abstract class GameObject {
 	public ObjectDimension getDimension() {
 		return dimension;
 	}
+	public void setDimension(ObjectDimension dimension) {
+		this.dimension = dimension;
+	}
 	public Rectangle getHitBox() {
 		return hitBox;
 	}

@@ -29,6 +29,7 @@ public abstract class Screen {
 	private boolean loaded = false;
 	private int cursor = Cursor.DEFAULT_CURSOR;
 	private FirstRender fRender = FirstRender.BUILD;
+	private Color background = Color.BLACK;
 	public Screen(Windows windows, Game game) {
 		this.windows = windows;
 		this.game = game;
@@ -112,7 +113,10 @@ public abstract class Screen {
 		return game;
 	}
 	public Color getBackground() {
-		return new Color(0, 0, 0);
+		return background;
+	}
+	public void setBackground(Color color) {
+		this.background = color;
 	}
 	public MouseInput getMouseInput() {
 		return mouseInput;

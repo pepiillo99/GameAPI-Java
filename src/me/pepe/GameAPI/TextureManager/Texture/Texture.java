@@ -10,13 +10,14 @@ import me.pepe.GameAPI.TextureManager.TextureDistance;
 import me.pepe.GameAPI.TextureManager.TextureManager;
 import me.pepe.GameAPI.Utils.Callback;
 import me.pepe.GameAPI.Utils.LoadAction;
+import me.pepe.GameAPI.Utils.Utils;
 
 public abstract class Texture {
 	private String name;
 	private TextureDistance actual = null;
 	private HashMap<TextureDistance, String> path = new HashMap<TextureDistance, String>();
 	private HashMap<TextureDistance, BufferedImage> dist = new HashMap<TextureDistance, BufferedImage>();
-	private HashMap<String, TextureChanger> textureChageds = new HashMap<String, TextureChanger>();
+	private HashMap<String, TextureChanger> textureChangers = new HashMap<String, TextureChanger>();
 	public Texture(String name) {
 		this.name = name;
 	}
@@ -83,6 +84,11 @@ public abstract class Texture {
 							dist.put(distance, image);
 							callback.done(true, null);
 							onLoad(distance);
+							for (TextureChanger tc : textureChangers.values()) {
+								if (tc.getTextureDistance().equals(distance)) {
+									tc.load(Utils.copyTexture(getTexture(distance)));
+								}
+							}
 							System.out.println("textura " + name + " cargada");
 							return true;
 						} catch (IOException e) {
@@ -98,6 +104,15 @@ public abstract class Texture {
 		} else {
 			System.out.println("Distancia " + distance.name() + " no registrada");
 		}
+	}
+	public void registerTextureChanger(String changerName, TextureChanger tc) {
+		textureChangers.put(changerName, tc);
+	}
+	public TextureChanger getTextureChanger(String changerName) {
+		return textureChangers.get(changerName);
+	}
+	public void removeTextureChanger(String changerName) {
+		textureChangers.remove(changerName);
 	}
 	public void unloadDistance(TextureDistance distance) {
 		dist.put(distance, null);

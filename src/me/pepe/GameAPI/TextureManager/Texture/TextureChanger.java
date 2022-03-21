@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import me.pepe.GameAPI.TextureManager.TextureDistance;
 
@@ -13,13 +14,17 @@ public abstract class TextureChanger {
 	public TextureChanger(TextureDistance dist) {
 		this.dist = dist;
 	}
-	public void load(Texture texture) {
-		if (texture.hasTextureDistance(dist) && texture.isTextureDistanceLoaded(dist)) {
-			this.texture = texture.getTexture(dist);
-			loadTexture();
-		}
+	public void load(BufferedImage texture) {
+		this.texture = texture;
+		loadTexture();
 	}
 	public abstract void loadTexture();
+	public BufferedImage getTexture() {
+		return texture;
+	}
+	public TextureDistance getTextureDistance() {
+		return dist;
+	}
 	public boolean isLoaded() {
 		return texture != null;
 	}
@@ -40,6 +45,19 @@ public abstract class TextureChanger {
 		        if ((rgb[i] & RGB_MASK) == oldRGB) {
 		            rgb[i] ^= toggleRGB;
 		        }
+		    }
+		    texture.setRGB(0, 0, w, h, rgb, 0, w);
+		}
+	}
+	public void changeAllColors(Color replaceColor) {
+		if (texture != null) {
+		    int toggleRGB = (replaceColor.getRed() << 16 | replaceColor.getGreen() << 8 | replaceColor.getBlue());
+		    int w = texture.getWidth();
+		    int h = texture.getHeight();
+
+		    int[] rgb = texture.getRGB(0, 0, w, h, null, 0, w);
+		    for (int i = 0; i < rgb.length; i++) {
+	            rgb[i] ^= toggleRGB;
 		    }
 		    texture.setRGB(0, 0, w, h, rgb, 0, w);
 		}
