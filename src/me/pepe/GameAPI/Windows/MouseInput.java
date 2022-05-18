@@ -74,7 +74,7 @@ public abstract class MouseInput extends MouseAdapter {
 			if (object instanceof Menu) {
 				Menu menu = (Menu) object;
 				if (menu.isOver()) {
-					menu.setClicked(true);
+					getResultMenu(menu).setClicked(true);
 				}
 			}
 		}	
@@ -82,7 +82,27 @@ public abstract class MouseInput extends MouseAdapter {
    }
    public void mouseReleased(MouseEvent e) {
 	   removePressedButton(e.getButton());
+	   Menu selectedMenu = null;
 		for (GameObject object : screen.getGameObjects()) {
+			if (object instanceof Menu) {
+				Menu menu = (Menu) object;
+				if (menu.isOver()) {
+					selectedMenu = menu;
+				}
+			}
+		}
+		if (selectedMenu != null) {
+			getResultMenu(selectedMenu).setClicked(true);
+			getResultMenu(selectedMenu).registerClick(x - selectedMenu.getActualX(), y - selectedMenu.getActualY());
+			System.out.println(getResultMenu(selectedMenu).getGameObjects());
+			execMouseOverOnGameObject(getResultMenu(selectedMenu).getGameObjects());
+		} else {
+			execMouseOverOnGameObject(screen.getGameObjects());
+		}
+	   onButtonReleased(MouseButtons.getClickedButton(e.getButton()));
+   }
+   private void execMouseOverOnGameObject(List<GameObject> gameObjects) {
+		for (GameObject object : gameObjects) {
 			if (object instanceof Button) {
 				Button button = (Button) object;
 				if (button.isOver()) {
@@ -95,19 +115,26 @@ public abstract class MouseInput extends MouseAdapter {
 				}
 			} else if (object instanceof TextBox) {
 				TextBox text = (TextBox) object;
+				System.out.println("text: " + text.isOver());
 				if (text.isOver()) {
 					text.requestFocus();
-				}
-			} else if (object instanceof Menu) {
-				Menu menu = (Menu) object;
-				if (menu.isOver()) {
-					menu.setClicked(false);
-					menu.registerClick(x - menu.getActualX(), y - menu.getActualY());
+					System.out.println("texto requested!");
+					text.requestFocus();
 				}
 			}
-		}	
-	   onButtonReleased(MouseButtons.getClickedButton(e.getButton()));
-	}
+		}
+   }
+   private Menu getResultMenu(Menu menu) {
+	   for (GameObject go : menu.getGameObjects()) {
+		   if (go instanceof Menu) {
+			   Menu menuu = (Menu) go;
+			   if (menuu.isOver()) {
+				   return getResultMenu(menuu);
+			   }
+		   }
+	   }
+	   return menu;
+   }
    public void mouseMoved(MouseEvent e) {
 	   this.x = e.getX();
 	   this.xOnScreen = e.getXOnScreen();

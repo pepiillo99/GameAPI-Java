@@ -16,6 +16,7 @@ import me.pepe.GameAPI.Utils.Utils;
 
 public abstract class ImageButton extends Button {
 	private Texture texture;
+	private BufferedImage directedTexture;
 	private String text;
 	public ImageButton(String name, Texture texture, GameLocation gameLocation, Game game, ObjectDimension dimension) {
 		this(null, name, texture, gameLocation, game, dimension, null);
@@ -28,11 +29,28 @@ public abstract class ImageButton extends Button {
 		this.texture = texture;
 		this.text = text;
 	}
+	public ImageButton(String name, BufferedImage directedTexture, GameLocation gameLocation, Game game, ObjectDimension dimension) {
+		this(null, name, directedTexture, gameLocation, game, dimension, null);
+	}
+	public ImageButton(String name, BufferedImage directedTexture, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
+		this(null, name, directedTexture, gameLocation, game, dimension, limits);
+	}
+	public ImageButton(String text, String name, BufferedImage directedTexture, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
+		super(name, gameLocation, game, dimension, limits);
+		this.directedTexture = directedTexture;
+		this.text = text;
+	}
 	public Texture getTexture() {
 		return texture;
 	}
 	public void setTexture(Texture texture) {
 		this.texture = texture;
+	}
+	public BufferedImage getDirectedTexture() {
+		return directedTexture;
+	}
+	public void setDirectedTexture(BufferedImage directedTexture) {
+		this.directedTexture = directedTexture;
 	}
 	public String getText() {
 		return text;
@@ -40,21 +58,29 @@ public abstract class ImageButton extends Button {
 	@Override
 	public void render(Graphics g) {
 		if (isShow()) {
-			if (texture.isTextureDistanceLoaded(TextureDistance.LOD)) {
-				BufferedImage bud = texture.getTexture(TextureDistance.LOD);
-				/**
-				if (!isOver() && texture.hasChangedTexture("unnOver")) {
-					bud = texture.getTextureChanged("unnOver").getTexture();
-				}
-				*/
-				g.drawImage(bud, getActualX() + (!isOver() ? 3 : -3), getActualY() + (!isOver() ? 3 : -3), getActualDimensionX() + (isOver() ? 6 : -6), getActualDimensionY() + (isOver() ? 6 : -6), null, null);
+			if (directedTexture != null) {
+				g.drawImage(directedTexture, getActualX() + (!isOver() ? 3 : -3), getActualY() + (!isOver() ? 3 : -3), getActualDimensionX() + (isOver() ? 6 : -6), getActualDimensionY() + (isOver() ? 6 : -6), null, null);
 				g.setColor(new Color(0, 0, 0, isOver() ? 255 : 200));
 				if (text != null) {
 					Utils.drawCenteredString(g, text, new Rectangle(getActualX() - (!isOver() ? 0 : 1), getActualY() - (!isOver() ? 17 : 19), getActualDimensionX(), getActualDimensionY()), /*Dymos.getInstance().getFontManager().getFont("Airborne").deriveFont(Font.PLAIN, isOver() ? 50 : 45)*/ new Font("Aria", Font.PLAIN, isOver() ? 50 : 45));
 				}
 			} else {
-				g.setColor(Utils.random.nextBoolean() ? Color.CYAN : Color.PINK);
-				g.fillRect(getActualX() + (!isOver() ? 3 : -3), getActualY() + (!isOver() ? 3 : -3), getActualDimensionX() + (isOver() ? 6 : -6), getActualDimensionY() + (isOver() ? 6 : -6));
+				if (texture.isTextureDistanceLoaded(TextureDistance.LOD)) {
+					BufferedImage bud = texture.getTexture(TextureDistance.LOD);
+					/**
+					if (!isOver() && texture.hasChangedTexture("unnOver")) {
+						bud = texture.getTextureChanged("unnOver").getTexture();
+					}
+					*/
+					g.drawImage(bud, getActualX() + (!isOver() ? 3 : -3), getActualY() + (!isOver() ? 3 : -3), getActualDimensionX() + (isOver() ? 6 : -6), getActualDimensionY() + (isOver() ? 6 : -6), null, null);
+					g.setColor(new Color(0, 0, 0, isOver() ? 255 : 200));
+					if (text != null) {
+						Utils.drawCenteredString(g, text, new Rectangle(getActualX() - (!isOver() ? 0 : 1), getActualY() - (!isOver() ? 17 : 19), getActualDimensionX(), getActualDimensionY()), /*Dymos.getInstance().getFontManager().getFont("Airborne").deriveFont(Font.PLAIN, isOver() ? 50 : 45)*/ new Font("Aria", Font.PLAIN, isOver() ? 50 : 45));
+					}
+				} else {
+					g.setColor(Utils.random.nextBoolean() ? Color.CYAN : Color.PINK);
+					g.fillRect(getActualX() + (!isOver() ? 3 : -3), getActualY() + (!isOver() ? 3 : -3), getActualDimensionX() + (isOver() ? 6 : -6), getActualDimensionY() + (isOver() ? 6 : -6));
+				}
 			}
 		}
 	}

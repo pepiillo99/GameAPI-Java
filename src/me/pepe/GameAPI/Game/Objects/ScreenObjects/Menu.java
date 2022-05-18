@@ -55,6 +55,13 @@ public abstract class Menu extends GameObject {
 		over = newover;
 	}
 	@Override
+	public void internalTick() {
+		tick();
+		for (GameObject go : getGameObjects()) {
+			go.internalTick();
+		}
+	}
+	@Override
 	public void render(Graphics g) {
 		if (show) {
 			g.drawImage(internalBuild(getActualDimensionX(), getActualDimensionY()), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY(), null);
@@ -129,6 +136,7 @@ public abstract class Menu extends GameObject {
 	}
 	public void addGameObject(GameObject gameObject) {
 		if (!objects.contains(gameObject)) {
+			gameObject.setMenu(this);
 			objects.add(gameObject);
 		}
 	}

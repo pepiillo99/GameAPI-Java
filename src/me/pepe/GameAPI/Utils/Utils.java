@@ -29,14 +29,7 @@ public class Utils {
 	public static Color getColorForPixel(BufferedImage image, int x, int y) {
 		ColorModel cm = image.getColorModel();
 		Raster raster = image.getRaster();
-		Object pixel = raster.getDataElements(x, y, null);
-		Color color;
-		if (cm.hasAlpha()) {
-			color = new Color(cm.getRed(pixel), cm.getGreen(pixel), cm.getBlue(pixel), cm.getAlpha(pixel));
-		} else {
-			color = new Color(cm.getRed(pixel), cm.getGreen(pixel), cm.getBlue(pixel), 255);
-		}
-		return color;
+		return getColorForPixel(cm, raster, x, y);
 	}
 	public static Color getColorForPixel(ColorModel cm, Raster raster, int x, int y) {
 		Object pixel = raster.getDataElements(x, y, null);
