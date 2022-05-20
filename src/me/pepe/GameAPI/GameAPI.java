@@ -14,6 +14,7 @@ public class GameAPI {
 		this.cacheManager = new CacheManager();
 		this.textureManager = new TextureManager();
 		this.fontManager = new FontManager();
+		// test
 	}
 	public static GameAPI getInstance() {
 		return instance;
