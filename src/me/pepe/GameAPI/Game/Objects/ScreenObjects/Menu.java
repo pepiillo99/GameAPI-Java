@@ -100,7 +100,7 @@ public abstract class Menu extends GameObject {
 		build(g);
 		ArrayList<GameObject> objects_copy = (ArrayList<GameObject>) ((ArrayList<GameObject>) objects).clone();
 		for (GameObject object : objects_copy) {
-			object.render(g);
+			object.internalRender(g);
 		}
 		ArrayList<Animation> animation_copy = (ArrayList<Animation>) ((ArrayList<Animation>) animations).clone();
 		for (Animation anim : animation_copy) {

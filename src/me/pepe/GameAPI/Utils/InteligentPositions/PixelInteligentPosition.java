@@ -1,7 +1,5 @@
 package me.pepe.GameAPI.Utils.InteligentPositions;
 
-import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
-
 public class PixelInteligentPosition extends InteligentPosition {
 	private int x;
 	private int y;
@@ -28,14 +26,6 @@ public class PixelInteligentPosition extends InteligentPosition {
 	}
 	@Override
 	protected int calcY() {
-		return y;
-	}
-	@Override
-	protected int calcXWithResize(InteligentResize intRes) {
-		return x;
-	}
-	@Override
-	protected int calcYWithResize(InteligentResize intRes) {
 		return y;
 	}
 }

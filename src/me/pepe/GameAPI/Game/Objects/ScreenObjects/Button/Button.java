@@ -7,6 +7,8 @@ import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.ObjectDimension;
 import me.pepe.GameAPI.Utils.RenderLimits;
+import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
+import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
 
 public abstract class Button extends GameObject {
 	private String name = "button";
@@ -22,6 +24,12 @@ public abstract class Button extends GameObject {
 		this.name = name;
 		this.limits = limits;
 	}
+	public Button(String name, InteligentPosition intPos, Game game, InteligentResize intRes) {
+		super(intPos, game, intRes);
+		if (intPos.hasRenderLimits()) {
+			this.limits = intPos.getRenderLimits();
+		}
+	}
 	public String getName() {
 		return name;
 	}
@@ -35,9 +43,17 @@ public abstract class Button extends GameObject {
 	public void tick() {
 		boolean newover = false;
 		if (isOnMenu()) {
-			newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getActualX() + getMenu().getStartRender().getX()), (int) (getActualY() + getMenu().getStartRender().getY()), getActualDimensionX(), getActualDimensionY());
+			if (hasInteligence()) {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getX() + getMenu().getStartRender().getX()), (int) (getY() + getMenu().getStartRender().getY()), (int) getDimension().getX(), (int) getDimension().getY());
+			} else {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getActualX() + getMenu().getStartRender().getX()), (int) (getActualY() + getMenu().getStartRender().getY()), getActualDimensionX(), getActualDimensionY());
+			}
 		} else {
-			newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+			if (hasInteligence()) {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
+			} else {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+			}
 		}
 		if (!over && newover) {
 			onOver();

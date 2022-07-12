@@ -139,7 +139,7 @@ public class Game extends Canvas implements Runnable {
 		long lastTime = System.nanoTime();
 		double nsTicks = 1000000000 / maxTPS;
 		double deltaTicks = 0;
-		double nsFPS = 1000000000 / maxFPS;
+		double nsFPS = 1000000000 / (maxFPS != 0 ? maxFPS : 1);
 		double deltaFPS = 0;
 		long timer = System.currentTimeMillis();
 		int frames = 0;
@@ -149,7 +149,7 @@ public class Game extends Canvas implements Runnable {
 			deltaTicks += (now - lastTime) / nsTicks;
 			deltaFPS += (now - lastTime) / nsFPS;
 			lastTime = now;
-			while(deltaTicks >= 1) {
+			if(deltaTicks >= 1) {
 				if (running) {
 					tick++;
 					tick();
@@ -157,7 +157,7 @@ public class Game extends Canvas implements Runnable {
 				}
 			}
 			if (maxFPS != 0) {
-				while(deltaFPS >= 1) {
+				if(deltaFPS >= 1) {
 					if (running) {
 						if (getScreen() != null) {
 							render();
@@ -192,6 +192,10 @@ public class Game extends Canvas implements Runnable {
 				tps = tick;
 				tick = 0;
 				frames = 0;
+				if (fps > maxFPS) {
+					// cuando el sistema se laguea se reinician los FPS a recuperar una vez ya estén recuperados ;)
+					deltaFPS = 0;
+				}
 			}
 		}
 		stop();

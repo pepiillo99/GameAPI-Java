@@ -8,6 +8,8 @@ import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Menu;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.ObjectDimension;
+import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
+import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
 
 public abstract class GameObject {
 	private Game game;
@@ -21,6 +23,8 @@ public abstract class GameObject {
 	private Rectangle hitBox;
 	private boolean move = true;
 	private Menu menu;
+	private InteligentPosition intPos;
+	private InteligentResize intRes;
 	public GameObject(GameLocation gameLocation, Game game, ObjectDimension dimension) {
 		this.game = game;
 		this.x = gameLocation.getX();
@@ -28,6 +32,13 @@ public abstract class GameObject {
 		this.id = game.getNextObjectID();
 		this.dimension = dimension;
 		hitBox = new Rectangle((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
+	}
+	public GameObject(InteligentPosition intPos, Game game, InteligentResize intRes) {
+		this.game = game;
+		this.id = game.getNextObjectID();
+		this.intPos = intPos;
+		this.intRes = intRes;
+		calcInteligence();
 	}
 	protected Game getGame() {
 		return game;
@@ -52,6 +63,21 @@ public abstract class GameObject {
 	}
 	public double getVelY() {
 		return velY;
+	}
+	public InteligentPosition getInteligentPosition() {
+		return intPos;
+	}
+	public void setInteligentPosition(InteligentPosition intPos) {
+		this.intPos = intPos;
+	}
+	public InteligentResize getInteligentResize() {
+		return intRes;
+	}
+	public void setInteligentResize(InteligentResize intRes) {
+		this.intRes = intRes;
+	}
+	public boolean hasInteligence() {
+		return intPos != null && intRes != null;
 	}
 	public void setVelX(double velX) {
 		this.velX = velX;
@@ -107,6 +133,12 @@ public abstract class GameObject {
 		this.windowsPassable = windowsPassable;
 	}
 	public abstract void tick();
+	public void internalRender(Graphics g) {
+		if (hasInteligence()) {
+			calcInteligence();
+		}
+		render(g);
+	}
 	public abstract void render(Graphics g);
 	public void onScreen() {}
 	public void onQuitScreen() {}
@@ -130,5 +162,17 @@ public abstract class GameObject {
 	}
 	public Rectangle simulateHitboxMove(double x, double y) {
 		return new Rectangle((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
+	}
+	private void calcInteligence() {
+		if (hasInteligence()) {
+			x = intPos.calculateX(intRes, 100);
+			y = intPos.calculateY(intRes, 100);
+			dimension = new ObjectDimension(intRes.calcWeidht(), intRes.calcHeight());
+			if (hitBox != null) {
+				hitBox.setBounds((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
+			} else {
+				hitBox = new Rectangle((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
+			}
+		}
 	}
 }

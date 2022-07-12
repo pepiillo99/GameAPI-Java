@@ -55,7 +55,7 @@ public abstract class Screen {
 		if (fRender.equals(FirstRender.BUILD)) {
 			paintLevel(g);
 			for (GameObject object : getGameObjectClonned()) {
-				object.render(g);
+				object.internalRender(g);
 			}
 			ArrayList<Animation> animation_copy = (ArrayList<Animation>) ((ArrayList<Animation>) animations).clone();
 			for (Animation anim : animation_copy) {
@@ -63,7 +63,7 @@ public abstract class Screen {
 			}
 		} else {
 			for (GameObject object : getGameObjectClonned()) {
-				object.render(g);
+				object.internalRender(g);
 			}
 			ArrayList<Animation> animation_copy = (ArrayList<Animation>) ((ArrayList<Animation>) animations).clone();
 			for (Animation anim : animation_copy) {
