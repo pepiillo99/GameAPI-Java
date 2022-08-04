@@ -42,10 +42,15 @@ public abstract class TextButtonStyle1 extends TextButton {
 			if (hasInteligence()) {
 				g.setColor(getBoxColor());
 				g.fillRect((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
-				int transPorcent = (int) Math.abs(((transTime * 100) / transDuration) - 100);
-				RenderUtils.fillRect(g, toBoxColor, new PixelInteligentPosition((int) getX(), (int) getY()), new PixelInteligentResize((int) getDimension().getY(), (int) (getDimension().getX() * (transPorcent)) / 100));
-				g.setColor(transPorcent < 50 ? getLetterColor() : toLetterColor);
-				Utils.drawCenteredString(g, getText(), new Rectangle((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY()), /*Dymos.getInstance().getFontManager().getFont("Airborne").deriveFont(Font.PLAIN, isOver() ? 50 : 45)*/new Font("Aria", Font.BOLD, (int)(getDimension().getY()/1.35)));
+				if (transTime != transDuration) {
+					int transPorcent = (int) Math.abs(((transTime * 100) / transDuration) - 100);
+					RenderUtils.fillRect(g, toBoxColor, new PixelInteligentPosition((int) getX(), (int) getY()), new PixelInteligentResize((int) getDimension().getY(), (int) (getDimension().getX() * (transPorcent)) / 100));
+					g.setColor(transPorcent < 50 ? getLetterColor() : toLetterColor);
+					Utils.drawCenteredString(g, getText(), new Rectangle((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY()), /*Dymos.getInstance().getFontManager().getFont("Airborne").deriveFont(Font.PLAIN, isOver() ? 50 : 45)*/new Font("Aria", Font.BOLD, (int)(getDimension().getY()/1.35)));
+				} else {
+					g.setColor(getLetterColor());
+					Utils.drawCenteredString(g, getText(), new Rectangle((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY()), /*Dymos.getInstance().getFontManager().getFont("Airborne").deriveFont(Font.PLAIN, isOver() ? 50 : 45)*/new Font("Aria", Font.BOLD, (int)(getDimension().getY()/1.35)));
+				}
 			}
 			if (isOver()) {
 				if (transTime > 0) {

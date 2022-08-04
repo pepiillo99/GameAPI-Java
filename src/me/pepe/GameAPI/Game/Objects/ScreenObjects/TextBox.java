@@ -1,6 +1,7 @@
 package me.pepe.GameAPI.Game.Objects.ScreenObjects;
 
 import java.awt.Cursor;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyListener;
@@ -40,7 +41,20 @@ public abstract class TextBox extends GameObject {
 	@Override
 	public void tick() {
 		text.setBounds((int) getActualX(), (int) getActualY(), (int) getActualDimensionX(), (int) getActualDimensionY());
-		boolean newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+		boolean newover = false;
+		if (isOnMenu()) {
+			if (hasInteligence()) {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getX() + getMenu().getStartRender().getX()), (int) (getY() + getMenu().getStartRender().getY()), (int) getDimension().getX(), (int) getDimension().getY());
+			} else {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getActualX() + getMenu().getStartRender().getX()), (int) (getActualY() + getMenu().getStartRender().getY()), getActualDimensionX(), getActualDimensionY());
+			}
+		} else {
+			if (hasInteligence()) {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
+			} else {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+			}
+		}
 		over = newover;
 		text.setFocusable(text.hasFocus());
 	}
@@ -71,6 +85,29 @@ public abstract class TextBox extends GameObject {
 	public void requestFocus() {
 		text.setFocusable(true);
 		text.requestFocus();
+		GameLocation mosLoc = getGame().getScreen().getMouseLocation();
+		int x = 0;
+		if (hasInteligence()) {
+			x = (int) (getX());
+		} else {
+			x = (int) (getActualX());
+		}
+		if (isOnMenu()) {
+			mosLoc = getGame().getScreen().getMouseLocation(getMenu());
+			x += getMenu().getStartRender().getX();
+		}
+		int diffX = (int) (mosLoc.getX() - x);
+		FontMetrics metrics = text.getFontMetrics(text.getFont());
+		int textLenght = text.getText().length();
+		for (int i = 1; i <= textLenght; i++) {
+			int width = metrics.stringWidth(text.getText().substring(0, i));
+			if (width >= diffX || width + 2 >= diffX || width - 2 >= diffX) {
+				text.setCaretPosition(i);
+				break;
+			} else if (i == textLenght) {
+				text.setCaretPosition(textLenght);
+			}
+		}
 		onFocus();
 	}
 	public int getActualX() {

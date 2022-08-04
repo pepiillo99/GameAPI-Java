@@ -40,8 +40,10 @@ public abstract class TextButtonStyle2 extends TextButton {
 			if (hasInteligence()) {
 				g.setColor(getBoxColor());
 				g.drawRect((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
-				int transPorcent = (int) Math.abs(((transTime * 100) / transDuration) - 100);
-				RenderUtils.fillRect(g, getBoxColor(), new PixelInteligentPosition((int) getX(), (int) getY()), new PixelInteligentResize((int) getDimension().getY(), (int) (getDimension().getX() * (transPorcent)) / 100), 50, 0);
+				if (transDuration != transTime) {
+					int transPorcent = (int) Math.abs(((transTime * 100) / transDuration) - 100);
+					RenderUtils.fillRect(g, getBoxColor(), new PixelInteligentPosition((int) (getX() + (getDimension().getX() / 2)), (int) getY()), new PixelInteligentResize((int) getDimension().getY(), (int) (getDimension().getX() * (transPorcent)) / 100), -50, 0);
+				}
 				g.setColor(getLetterColor());
 				Utils.drawCenteredString(g, getText(), new Rectangle((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY()), /*Dymos.getInstance().getFontManager().getFont("Airborne").deriveFont(Font.PLAIN, isOver() ? 50 : 45)*/new Font("Aria", Font.BOLD, (int)(getDimension().getY()/1.35)));
 			}

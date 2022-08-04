@@ -94,7 +94,6 @@ public abstract class MouseInput extends MouseAdapter {
 		if (selectedMenu != null) {
 			getResultMenu(selectedMenu).setClicked(true);
 			getResultMenu(selectedMenu).registerClick(x - selectedMenu.getActualX(), y - selectedMenu.getActualY());
-			System.out.println(getResultMenu(selectedMenu).getGameObjects());
 			execMouseOverOnGameObject(getResultMenu(selectedMenu).getGameObjects());
 		} else {
 			execMouseOverOnGameObject(screen.getGameObjects());
@@ -115,10 +114,7 @@ public abstract class MouseInput extends MouseAdapter {
 				}
 			} else if (object instanceof TextBox) {
 				TextBox text = (TextBox) object;
-				System.out.println("text: " + text.isOver());
 				if (text.isOver()) {
-					text.requestFocus();
-					System.out.println("texto requested!");
 					text.requestFocus();
 				}
 			}
@@ -142,7 +138,7 @@ public abstract class MouseInput extends MouseAdapter {
 	   this.yOnScreen = e.getYOnScreen();
 	   onMouseMoved();
    }
-   public void mouseDragged(MouseEvent e) { // cuando el raton se está arrastrando (moverse pulsado no ejecuta 'mouseMoved') ;(
+   public void mouseDragged(MouseEvent e) { // cuando el raton se estï¿½ arrastrando (moverse pulsado no ejecuta 'mouseMoved') ;(
 	   int diffX = x - e.getX();
 	   int diffY = y - e.getY();
 	   this.x = e.getX();

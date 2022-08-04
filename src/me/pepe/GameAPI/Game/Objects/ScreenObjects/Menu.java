@@ -67,6 +67,18 @@ public abstract class Menu extends GameObject {
 			g.drawImage(internalBuild(getActualDimensionX(), getActualDimensionY()), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY(), null);
 		}
 	}
+	@Override
+	public void onScreen() {
+		for (GameObject go : getGameObjects()) {
+			go.onScreen();
+		}
+	}
+	@Override
+	public void onQuitScreen() {
+		for (GameObject go : getGameObjects()) {
+			go.onQuitScreen();
+		}
+	}
 	public RenderLimits getMenuRenderLimits() {
 		return menuRenderLimits;
 	}
