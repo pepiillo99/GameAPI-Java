@@ -16,15 +16,13 @@ public abstract class KeyInput extends KeyAdapter {
 	public abstract void tick();
 	public KeyInput(Screen screen) {
 		this.screen = screen;
+		this.windows = screen.getWindows();
 	}
 	public void onWrite(char c) {
 		
 	}
 	public abstract void onKeyPressed(int key);
 	public abstract void onKeyReleased(int key);
-	public KeyInput(Windows windows) {
-		this.windows = windows;
-	}
 	public boolean checkIsPressed(int key) {
 		return pressedKeys.contains(key);
 	}

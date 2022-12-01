@@ -113,7 +113,7 @@ public abstract class Screen {
 	}
 	public abstract void internalTick();
 	protected abstract void paintLevel(Graphics g);
-	protected Windows getWindows() {
+	public Windows getWindows() {
 		return windows;
 	}
 	protected Game getGame() {
