@@ -25,7 +25,7 @@ public abstract class InteligentPosition {
 	}
 	// El porcent indica en que porcentaje del objeto empieza a pintar...
 	public int calculateX(InteligentResize intRes, int porcent) {
-		return calcX() + (renderLimits != null ? renderLimits.getX() : 0) + ((intRes.calcHeight()  * porcent) / 100);
+		return calcX() + (renderLimits != null ? renderLimits.getX() : 0) + ((intRes.calcWeidht()  * porcent) / 100);
 	}
 	public int calculateY(InteligentResize intRes, int porcent) {
 		return calcY() + (renderLimits != null ? renderLimits.getY() : 0) + ((intRes.calcHeight()  * porcent) / 100);
