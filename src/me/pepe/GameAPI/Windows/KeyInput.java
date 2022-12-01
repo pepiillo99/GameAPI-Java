@@ -5,16 +5,26 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.pepe.GameAPI.Game.Objects.GameObject;
+import me.pepe.GameAPI.Game.Objects.ScreenObjects.TextBox;
+import me.pepe.GameAPI.Screen.Screen;
+
 public abstract class KeyInput extends KeyAdapter {
+	private Screen screen;
 	private Windows windows;
 	private List<Integer> pressedKeys = new ArrayList<Integer>();
 	public abstract void tick();
+	public KeyInput(Screen screen) {
+		this.screen = screen;
+	}
+	public void onWrite(char c) {
+		
+	}
 	public abstract void onKeyPressed(int key);
 	public abstract void onKeyReleased(int key);
 	public KeyInput(Windows windows) {
 		this.windows = windows;
 	}
-	public KeyInput() {}
 	public boolean checkIsPressed(int key) {
 		return pressedKeys.contains(key);
 	}
@@ -32,6 +42,25 @@ public abstract class KeyInput extends KeyAdapter {
 			windows.setFullScreen(!windows.isFullScreen());
 		}
 		addPressedKey(key);
+		if (event.getID() == KeyEvent.KEY_PRESSED) {
+			onWrite(event.getKeyChar());
+			for (GameObject go : screen.getGameObjects()) {
+				if (go instanceof TextBox) {
+					TextBox tb = (TextBox) go;
+					if (tb.isFocused()) {
+						tb.onPress(key);
+						if (key != 8 && key != 127) {
+							char c = event.getKeyChar();
+							// queda por hacer las tildes
+							//System.out.println(event.getKeyCode() + " - " + event.getKeyChar() + " - " + event.isMetaDown());
+							if (Character.isDefined(c)) {
+								tb.write(c);
+							}	
+						}
+					}
+				}
+			}
+		}
 		onKeyPressed(key);
 	}
 	public void keyReleased(KeyEvent event) {

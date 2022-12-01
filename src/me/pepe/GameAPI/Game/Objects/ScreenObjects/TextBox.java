@@ -1,46 +1,59 @@
 package me.pepe.GameAPI.Game.Objects.ScreenObjects;
 
+import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.ObjectDimension;
 import me.pepe.GameAPI.Utils.RenderLimits;
+import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
+import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
 
 public abstract class TextBox extends GameObject {
-	private JTextField text;
+	private String text = "";
+	private String placeholder = "placeholder";
+	private boolean ocult = false;
+	private Font font = new Font("Arial", Font.PLAIN, 20);
+	private int caret = 0;
+	private boolean focused = false;
+	private boolean needFocus = false;
+	private int focusDiffX = 0;
 	private boolean over = false;
+	private boolean drawLine = false;
+	private long timeToDrawLine = 0;
 	private RenderLimits limits;
-	public TextBox(String test, GameLocation gameLocation, Game game, ObjectDimension dimension) {
-		this(test, gameLocation, game, dimension, null, false);
+	public TextBox(String text, GameLocation gameLocation, Game game, ObjectDimension dimension) {
+		this(text, gameLocation, game, dimension, null, false);
 	}
-	public TextBox(String test, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
-		this(test, gameLocation, game, dimension, limits, false);
+	public TextBox(String text, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
+		this(text, gameLocation, game, dimension, limits, false);
 	}
-	public TextBox(String test, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits, boolean ocult) {
+	public TextBox(String text, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits, boolean ocult) {
 		super(gameLocation, game, dimension);
 		this.limits = limits;
-		if (ocult) {
-			text = new JPasswordField(test);
-			text.setBounds((int) getX(), (int) getY(), (int) getActualDimensionX(), (int) getActualDimensionY());
-		} else {
-			text = new JTextField(test);
-			text.setBounds((int) getX(), (int) getY(), (int) getActualDimensionX(), (int) getActualDimensionY());
+		this.text = text;
+		this.ocult = ocult;
+	}
+	public TextBox(String text, InteligentPosition intPos, Game game, InteligentResize intRes) {
+		this(text, intPos, game, intRes, false);
+	}
+	public TextBox(String text, InteligentPosition intPos, Game game, InteligentResize intRes, boolean ocult) {
+		super(intPos, game, intRes);
+		if (intPos.hasRenderLimits()) {
+			this.limits = intPos.getRenderLimits();
 		}
-		text.setFocusTraversalKeysEnabled(false);
+		this.text = text;
+		this.ocult = ocult;
 	}
 	@Override
 	public void tick() {
-		text.setBounds((int) getActualX(), (int) getActualY(), (int) getActualDimensionX(), (int) getActualDimensionY());
 		boolean newover = false;
 		if (isOnMenu()) {
 			if (hasInteligence()) {
@@ -56,7 +69,6 @@ public abstract class TextBox extends GameObject {
 			}
 		}
 		over = newover;
-		text.setFocusable(text.hasFocus());
 	}
 	@Override
 	public int getCursor() {
@@ -67,24 +79,52 @@ public abstract class TextBox extends GameObject {
 	}
 	@Override
 	public void render(Graphics g) {
-		if (text.getSize().getWidth() == getActualDimensionX() && text.getSize().getHeight() == getActualDimensionY()) {
+		if (hasInteligence()) {
+			g.drawImage(createImage((int) getDimension().getX(), (int) getDimension().getY()), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY(), null);
+		} else {
 			g.drawImage(createImage(getActualDimensionX(), getActualDimensionY()), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY(), null);
+		}	
+	}
+	public boolean isFocused() {
+		return focused;
+	}
+	public void write(char c) {
+		this.text += c;
+		caret++;
+	}
+	public int getCaretPosition() {
+		return caret;
+	}
+	public void setCaretPosition(int pos) {
+		if (pos < 0) {
+			pos = 0;
 		}
-	}
-	@Override
-	public void onScreen() {
-		getGame().getWindows().getFrame().add(text);
-	}
-	@Override
-	public void onQuitScreen() {
-		getGame().getWindows().getFrame().remove(text);
+		if (pos > text.length()) {
+			pos = text.length();
+		}
+		caret = pos;
 	}
 	public boolean isOver() {
 		return over;
 	}
+	public void onPress(int key) {
+		if (key == 37) {
+			setCaretPosition(getCaretPosition() - 1);
+		} else if (key == 39) {
+			setCaretPosition(getCaretPosition() + 1);
+		} else if (key == 8) {
+			if (!text.isEmpty()) {
+				text = text.substring(0, caret-1) + text.substring(caret, text.length());
+				caret--;	
+			}
+		} else if (key == 127) {
+			if (caret != text.length()) {
+				text = text.substring(0, caret) + text.substring(caret+1, text.length());
+			}		
+		}
+	}
 	public void requestFocus() {
-		text.setFocusable(true);
-		text.requestFocus();
+		needFocus = true;
 		GameLocation mosLoc = getGame().getScreen().getMouseLocation();
 		int x = 0;
 		if (hasInteligence()) {
@@ -96,19 +136,10 @@ public abstract class TextBox extends GameObject {
 			mosLoc = getGame().getScreen().getMouseLocation(getMenu());
 			x += getMenu().getStartRender().getX();
 		}
-		int diffX = (int) (mosLoc.getX() - x);
-		FontMetrics metrics = text.getFontMetrics(text.getFont());
-		int textLenght = text.getText().length();
-		for (int i = 1; i <= textLenght; i++) {
-			int width = metrics.stringWidth(text.getText().substring(0, i));
-			if (width >= diffX || width + 2 >= diffX || width - 2 >= diffX) {
-				text.setCaretPosition(i);
-				break;
-			} else if (i == textLenght) {
-				text.setCaretPosition(textLenght);
-			}
-		}
-		onFocus();
+		focusDiffX = (int) (mosLoc.getX() - x);
+	}
+	public void unFocus() {
+		focused = false;
 	}
 	public int getActualX() {
 		return (int) (x * (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint()) / 100) + (limits != null ? limits.getX() : 0);
@@ -129,18 +160,60 @@ public abstract class TextBox extends GameObject {
 	private BufferedImage createImage (int width, int height) {
 		BufferedImage image = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = image.createGraphics();
-		text.paint(g);
+		FontMetrics fontMetrics = g.getFontMetrics(font);
+		if (needFocus) {
+			int textLenght = getText().length();
+			for (int i = 1; i <= textLenght; i++) {
+				int widthh = fontMetrics.stringWidth(getText().substring(0, i));
+				if (widthh >= focusDiffX || widthh + 2 >= focusDiffX || widthh - 2 >= focusDiffX) {
+					caret = i;
+					break;
+				} else if (i == textLenght) {
+					caret = textLenght;
+				}
+			}
+			focused = true;
+			needFocus = false;
+			onFocus();
+		}
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, width, height);
+		int form = fontMetrics.getHeight() - 6;
+		//System.out.println(fontMetrics.getHeight() + " - " + height + " - " + (form));
+		String text = getText();
+		if (ocult) {
+			text = "";
+			for (int i = 0; i < getText().length(); i++) {
+				text += "*";
+			}
+		}
+		g.setFont(font);
+		if (!text.isEmpty()) {
+			g.setColor(Color.BLACK);
+			g.drawString(text, 2, form);
+		} else {
+			g.setColor(Color.LIGHT_GRAY);
+			g.drawString(placeholder, 2, form);
+		}
+		if (focused) {
+			if (drawLine) {
+				int posLine = fontMetrics.stringWidth(text.substring(0, caret));
+				g.setColor(Color.BLACK);
+				g.drawLine(posLine+1, 0, posLine+1, height);
+			}
+			if (timeToDrawLine - System.currentTimeMillis() <= 0) {
+				drawLine = !drawLine;
+				timeToDrawLine = System.currentTimeMillis() + 500;
+			}
+		}
 		g.dispose();
 		return image;
 	}
 	public String getText() {
-		return text.getText();
+		return text;
 	}
 	public void setText(String text) {
-		this.text.setText(text);
+		this.text = text;
 	}
 	public abstract void onFocus();
-	public void setKeyListener(KeyListener keyListener) {
-		text.addKeyListener(keyListener);
-	}
 }

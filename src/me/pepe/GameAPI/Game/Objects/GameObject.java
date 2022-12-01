@@ -24,6 +24,8 @@ public abstract class GameObject {
 	private boolean move = true;
 	private Menu menu;
 	private InteligentPosition intPos;
+	private int intPostOffSetX = 100;
+	private int intPostOffSetY = 100;	
 	private InteligentResize intRes;
 	public GameObject(GameLocation gameLocation, Game game, ObjectDimension dimension) {
 		this.game = game;
@@ -163,10 +165,25 @@ public abstract class GameObject {
 	public Rectangle simulateHitboxMove(double x, double y) {
 		return new Rectangle((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
 	}
+	public int getIntPostOffSetX() {
+		return intPostOffSetX;
+	}
+	/*
+	 * Para que el objeto esté centrado habrá que ponerle -50% (porque se empieza a pintar desde el 0,0)
+	 */
+	public void setIntPostOffSetX(int intPostOffSetX) {
+		this.intPostOffSetX = intPostOffSetX;
+	}
+	public int getIntPostOffSetY() {
+		return intPostOffSetY;
+	}
+	public void setIntPostOffSetY(int intPostOffSetY) {
+		this.intPostOffSetY = intPostOffSetY;
+	}
 	private void calcInteligence() {
 		if (hasInteligence()) {
-			x = intPos.calculateX(intRes, 100);
-			y = intPos.calculateY(intRes, 100);
+			x = intPos.calculateX(intRes, intPostOffSetX);
+			y = intPos.calculateY(intRes, intPostOffSetY);
 			dimension = new ObjectDimension(intRes.calcWeidht(), intRes.calcHeight());
 			if (hitBox != null) {
 				hitBox.setBounds((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());

@@ -12,6 +12,8 @@ import me.pepe.GameAPI.TextureManager.Animation;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.ObjectDimension;
 import me.pepe.GameAPI.Utils.RenderLimits;
+import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
+import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
 
 public abstract class Menu extends GameObject {
 	private boolean show = true;
@@ -48,10 +50,47 @@ public abstract class Menu extends GameObject {
 			}			
 		};
 	}
+	public Menu(InteligentPosition intPos, Game game, InteligentResize intRes) {
+		super(intPos, game, intRes);
+		if (intPos.hasRenderLimits()) {
+			this.limits = intPos.getRenderLimits();
+		}
+		this.menuRenderLimits = new RenderLimits() {
+			@Override
+			protected int calcX(int x, int y) {
+				return 0;
+			}
+			@Override
+			protected int calcY(int x, int y) {
+				return 0;
+			}
+			@Override
+			protected int calcSizeX(int x, int y) {
+				return (int) getDimension().getX();
+			}
+			@Override
+			protected int calcSizeY(int x, int y) {
+				return (int) getDimension().getY();
+			}			
+		};
+	}
 	@Override
 	public void tick() {
 		menuRenderLimits.calc(getActualDimensionX(), getActualDimensionY());
-		boolean newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+		boolean newover = false;
+		if (isOnMenu()) {
+			if (hasInteligence()) {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getX() + getMenu().getStartRender().getX()), (int) (getY() + getMenu().getStartRender().getY()), (int) getDimension().getX(), (int) getDimension().getY());
+			} else {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getActualX() + getMenu().getStartRender().getX()), (int) (getActualY() + getMenu().getStartRender().getY()), getActualDimensionX(), getActualDimensionY());
+			}
+		} else {
+			if (hasInteligence()) {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
+			} else {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+			}
+		}
 		over = newover;
 	}
 	@Override
@@ -64,7 +103,11 @@ public abstract class Menu extends GameObject {
 	@Override
 	public void render(Graphics g) {
 		if (show) {
-			g.drawImage(internalBuild(getActualDimensionX(), getActualDimensionY()), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY(), null);
+			if (hasInteligence()) {
+				g.drawImage(internalBuild((int) getDimension().getX(), (int) getDimension().getY()), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY(), null);
+			} else {
+				g.drawImage(internalBuild(getActualDimensionX(), getActualDimensionY()), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY(), null);
+			}
 		}
 	}
 	@Override

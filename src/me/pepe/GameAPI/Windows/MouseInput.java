@@ -116,6 +116,8 @@ public abstract class MouseInput extends MouseAdapter {
 				TextBox text = (TextBox) object;
 				if (text.isOver()) {
 					text.requestFocus();
+				} else {
+					text.unFocus();
 				}
 			}
 		}

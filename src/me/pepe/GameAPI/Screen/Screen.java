@@ -23,7 +23,14 @@ public abstract class Screen {
 	private Game game;
 	private MouseInput mouseInput;
 	private GameLocation mouseLoc = new GameLocation(0, 0);
-	private KeyInput keyInput;
+	private KeyInput keyInput = new KeyInput(this) {
+		@Override
+		public void tick() {}
+		@Override
+		public void onKeyPressed(int key) {}
+		@Override
+		public void onKeyReleased(int key) {}		
+	};
 	private List<GameObject> objects = new ArrayList<GameObject>();
 	private List<Animation> animations = new ArrayList<Animation>();
 	private boolean loaded = false;
