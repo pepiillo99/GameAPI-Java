@@ -7,10 +7,9 @@ import me.pepe.GameAPI.Utils.RenderType;
 public class ReferenceObjectInteligentPosition extends InteligentPosition {
 	private GameObject reference;
 	private RenderType renderType;
-	private int initialX; // posiciï¿½n relativa
+	private int initialX; // posición relativa
 	private int initialY;
-	private int offSetX; // posiciÃ³n respecto al objeto
-	private int offSetX; // posiciï¿½n respecto al objeto
+	private int offSetX; // posición respecto al objeto
 	private int offSetY;
 	public ReferenceObjectInteligentPosition(GameObject reference, int initialX, int initialY) {
 		this(reference, RenderType.PIXEL, initialX, initialY, 0, 0, null);
