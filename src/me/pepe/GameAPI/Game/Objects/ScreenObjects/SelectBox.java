@@ -9,6 +9,8 @@ import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.ObjectDimension;
 import me.pepe.GameAPI.Utils.RenderLimits;
+import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
+import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
 
 public abstract class SelectBox extends GameObject {
 	private boolean selected = false;
@@ -21,9 +23,28 @@ public abstract class SelectBox extends GameObject {
 		super(gameLocation, game, new ObjectDimension(size, size));
 		this.limits = limits;
 	}
+	public SelectBox(InteligentPosition intPos, Game game, InteligentResize intRes) {
+		super(intPos, game, intRes);
+		if (intPos.hasRenderLimits()) {
+			this.limits = intPos.getRenderLimits();
+		}
+	}
 	@Override
 	public void tick() {
-		boolean newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+		boolean newover = false;
+		if (isOnMenu()) {
+			if (hasInteligence()) {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getX() + getMenu().getStartRender().getX()), (int) (getY() + getMenu().getStartRender().getY()), (int) getDimension().getX(), (int) getDimension().getY());
+			} else {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getActualX() + getMenu().getStartRender().getX()), (int) (getActualY() + getMenu().getStartRender().getY()), getActualDimensionX(), getActualDimensionY());
+			}
+		} else {
+			if (hasInteligence()) {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
+			} else {
+				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+			}
+		}
 		if (!over && newover) {
 			onOver();
 		}
@@ -32,7 +53,11 @@ public abstract class SelectBox extends GameObject {
 	@Override
 	public void render(Graphics g) {
 		g.setColor(selected ? Color.GRAY : Color.DARK_GRAY);
-		g.fillRect(getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+		if (hasInteligence()) {
+			g.fillRect((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
+		} else {
+			g.fillRect(getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
+		}
 	}
 	@Override
 	public int getCursor() {

@@ -9,34 +9,27 @@ import java.awt.image.BufferedImage;
 import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.TextureManager.TextureDistance;
 import me.pepe.GameAPI.TextureManager.Texture.Texture;
-import me.pepe.GameAPI.Utils.GameLocation;
-import me.pepe.GameAPI.Utils.ObjectDimension;
-import me.pepe.GameAPI.Utils.RenderLimits;
 import me.pepe.GameAPI.Utils.Utils;
+import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
+import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
 
 public abstract class ImageButton extends Button {
 	private Texture texture;
 	private BufferedImage directedTexture;
 	private String text;
-	public ImageButton(String name, Texture texture, GameLocation gameLocation, Game game, ObjectDimension dimension) {
-		this(null, name, texture, gameLocation, game, dimension, null);
+	public ImageButton(String name, Texture texture, InteligentPosition intPos, Game game, InteligentResize intRes) {
+		this(null, name, texture, intPos, game, intRes);
 	}
-	public ImageButton(String name, Texture texture, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
-		this(null, name, texture, gameLocation, game, dimension, limits);
-	}
-	public ImageButton(String text, String name, Texture texture, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
-		super(name, gameLocation, game, dimension, limits);
+	public ImageButton(String text, String name, Texture texture, InteligentPosition intPos, Game game, InteligentResize intRes) {
+		super(name, intPos, game, intRes);
 		this.texture = texture;
 		this.text = text;
 	}
-	public ImageButton(String name, BufferedImage directedTexture, GameLocation gameLocation, Game game, ObjectDimension dimension) {
-		this(null, name, directedTexture, gameLocation, game, dimension, null);
+	public ImageButton(String name, BufferedImage directedTexture, InteligentPosition intPos, Game game, InteligentResize intRes) {
+		this(null, name, directedTexture, intPos, game, intRes);
 	}
-	public ImageButton(String name, BufferedImage directedTexture, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
-		this(null, name, directedTexture, gameLocation, game, dimension, limits);
-	}
-	public ImageButton(String text, String name, BufferedImage directedTexture, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
-		super(name, gameLocation, game, dimension, limits);
+	public ImageButton(String text, String name, BufferedImage directedTexture, InteligentPosition intPos, Game game, InteligentResize intRes) {
+		super(name, intPos, game, intRes);
 		this.directedTexture = directedTexture;
 		this.text = text;
 	}
