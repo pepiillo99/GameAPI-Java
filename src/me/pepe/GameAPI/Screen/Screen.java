@@ -23,14 +23,7 @@ public abstract class Screen {
 	private Game game;
 	private MouseInput mouseInput;
 	private GameLocation mouseLoc = new GameLocation(0, 0);
-	private KeyInput keyInput = new KeyInput(this) {
-		@Override
-		public void tick() {}
-		@Override
-		public void onKeyPressed(int key) {}
-		@Override
-		public void onKeyReleased(int key) {}		
-	};
+	private KeyInput keyInput;
 	private List<GameObject> objects = new ArrayList<GameObject>();
 	private List<Animation> animations = new ArrayList<Animation>();
 	private boolean loaded = false;
@@ -40,6 +33,14 @@ public abstract class Screen {
 	public Screen(Windows windows, Game game) {
 		this.windows = windows;
 		this.game = game;
+		this.keyInput = new KeyInput(this) {
+			@Override
+			public void tick() {}
+			@Override
+			public void onKeyPressed(int key) {}
+			@Override
+			public void onKeyReleased(int key) {}		
+		};
 	}
 	public Screen(Windows windows, Game game, MouseInput mouseInput, KeyInput keyInput) {
 		this.windows = windows;
