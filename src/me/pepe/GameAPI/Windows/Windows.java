@@ -1,20 +1,23 @@
 package me.pepe.GameAPI.Windows;
 
-import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
+import me.pepe.GameAPI.Game.Game;
+
 public class Windows {
 	private JFrame frame;
+	private Game game;
 	private String title;
 	private int x;
 	private int y;
 	public long start = 0;
 	private boolean canFullScrenable = false;
-	public Windows(String title, int x, int y, Image icon, Canvas canvas) {
+	public Windows(String title, int x, int y, Image icon, Game game) {
+		this.game = game;
 		this.x = x;
 		this.y = y;
 		this.title = title;
@@ -30,7 +33,7 @@ public class Windows {
 			frame.setIconImage(icon);
 		}
 		System.out.println("Ha tardadp " + (System.currentTimeMillis() - start) + "ms en ejecutar la ventana");
-		frame.add(canvas);
+		frame.add(game);
 		System.out.println("Ha tardadp " + (System.currentTimeMillis() - start) + "ms en añadir el canvas la ventana");
 	}
 	public String getTitle() {
@@ -102,6 +105,7 @@ public class Windows {
 			frame.setLocationRelativeTo(null);
 			frame.setVisible(true);
 		}
+		game.requestFocus();
 	}
 	public void setMinSize(int x, int y) {
 		frame.setMinimumSize(new Dimension(x, y));
