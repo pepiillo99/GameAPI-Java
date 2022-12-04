@@ -10,23 +10,25 @@ public class ExtendInteligentDimension extends InteligentDimension {
 	private GameObject object;
 	private InteligentExtendiblePosibility extendiblePosibility = InteligentExtendiblePosibility.BOTH;
 	private InteligentDimension auxDim;
-	public ExtendInteligentDimension(Menu menu, GameObject object) { // for use both
-		this.menu = menu;
-		this.object = object;
+	public ExtendInteligentDimension() { // define menu or screen and object next? (both)
+		
 	}
-	public ExtendInteligentDimension(Screen screen, GameObject object) { // for use both
-		this.screen = screen;
-		this.object = object;
-	}
-	public ExtendInteligentDimension(Menu menu, GameObject object, InteligentExtendiblePosibility extendiblePosibility, InteligentDimension intDim) {
-		this.menu = menu;
-		this.object = object;
+	public ExtendInteligentDimension(InteligentExtendiblePosibility extendiblePosibility, InteligentDimension intDim) { // define menu or screen and object next?
 		this.extendiblePosibility = extendiblePosibility;
 		this.auxDim = intDim;
 	}
-	public ExtendInteligentDimension(Screen screen, GameObject object, InteligentExtendiblePosibility extendiblePosibility, InteligentDimension intDim) {
+	/**
+	 * For use InteligentExtendiblePosibility.BOTH
+	 * You only need use this if you use object.setInteligentPosition(..)
+	 */
+	public ExtendInteligentDimension(Screen screen) {
 		this.screen = screen;
-		this.object = object;
+	}
+	/**
+	 * You only need use this if you use object.setInteligentPosition(..)
+	 */
+	public ExtendInteligentDimension(Screen screen, InteligentExtendiblePosibility extendiblePosibility, InteligentDimension intDim) {
+		this.screen = screen;
 		this.extendiblePosibility = extendiblePosibility;
 		this.auxDim = intDim;
 	}
@@ -36,7 +38,7 @@ public class ExtendInteligentDimension extends InteligentDimension {
 	@Override
 	public int calcWeidht() {
 		if (extendiblePosibility.equals(InteligentExtendiblePosibility.BOTH) || extendiblePosibility.equals(InteligentExtendiblePosibility.WEIDHT)) {
-			return (int) (getMaxWeidht() - object.getX()) - 1;
+			return (int) (getMaxWeidht() - object.getX());
 		} else if (extendiblePosibility.equals(InteligentExtendiblePosibility.HEIGHT)) {
 			if (auxDim != null) {
 				return auxDim.calcWeidht();
@@ -47,13 +49,25 @@ public class ExtendInteligentDimension extends InteligentDimension {
 	@Override
 	public int calcHeight() {
 		if (extendiblePosibility.equals(InteligentExtendiblePosibility.BOTH) || extendiblePosibility.equals(InteligentExtendiblePosibility.HEIGHT)) {
-			return (int) (getMaxHeight() - object.getY()) - 1;
+			return (int) (getMaxHeight() - object.getY());
 		} else if (extendiblePosibility.equals(InteligentExtendiblePosibility.WEIDHT)) {
 			if (auxDim != null) {
 				return auxDim.calcHeight();
 			}
 		}
 		return 0;
+	}
+	public GameObject getGameObject() {
+		return object;
+	}
+	public void setGameObject(GameObject object) {
+		this.object = object;
+	}
+	public void setScreen(Screen screen) {
+		this.screen = screen;
+	}
+	public void setMenu(Menu menu) {
+		this.menu = menu;
 	}
 	private int getMaxWeidht() {
 		if (screen != null) {

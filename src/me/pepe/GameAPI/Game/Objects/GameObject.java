@@ -21,6 +21,7 @@ import me.pepe.GameAPI.Utils.DOMUtils;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.ObjectDimension;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
+import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
 
 public abstract class GameObject {
@@ -98,6 +99,12 @@ public abstract class GameObject {
 		return intDim;
 	}
 	public void setInteligentDimension(InteligentDimension intDim) {
+		if (intDim instanceof ExtendInteligentDimension) {
+			((ExtendInteligentDimension) intDim).setGameObject(this);
+			if (isOnMenu()) {
+				((ExtendInteligentDimension) intDim).setMenu(menu);
+			}
+		}
 		this.intDim = intDim;
 	}
 	public boolean hasInteligence() {

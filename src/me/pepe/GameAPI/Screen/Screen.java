@@ -16,6 +16,7 @@ import me.pepe.GameAPI.Game.Objects.ScreenObjects.Menu;
 import me.pepe.GameAPI.TextureManager.Animation;
 import me.pepe.GameAPI.Utils.FirstRender;
 import me.pepe.GameAPI.Utils.GameLocation;
+import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension;
 import me.pepe.GameAPI.Windows.KeyInput;
 import me.pepe.GameAPI.Windows.MouseInput;
 import me.pepe.GameAPI.Windows.Windows;
@@ -153,6 +154,11 @@ public abstract class Screen {
 	}
 	public void addGameObject(GameObject gameObject) {
 		if (!objects.containsKey(gameObject.getID())) {
+			if (gameObject.getInteligentDimension() instanceof ExtendInteligentDimension) {
+				ExtendInteligentDimension extendInteligentDimension = (ExtendInteligentDimension) gameObject.getInteligentDimension();
+				extendInteligentDimension.setGameObject(gameObject);
+				extendInteligentDimension.setScreen(this);
+			}
 			objects.put(gameObject.getID(), gameObject);
 		} else {
 			throw new IllegalArgumentException("Ya hay un objeto con el nombre " + gameObject.getID() + " en la pantalla " + getClass().getSimpleName());

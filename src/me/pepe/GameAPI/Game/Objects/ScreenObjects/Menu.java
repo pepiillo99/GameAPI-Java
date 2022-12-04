@@ -12,6 +12,7 @@ import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.TextureManager.Animation;
 import me.pepe.GameAPI.Utils.GameLocation;
+import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
 
@@ -125,6 +126,11 @@ public abstract class Menu extends GameObject {
 	}
 	public void addGameObject(GameObject gameObject) {
 		if (!objects.containsKey(gameObject.getID())) {
+			if (gameObject.getInteligentDimension() instanceof ExtendInteligentDimension) {
+				ExtendInteligentDimension extendInteligentDimension = (ExtendInteligentDimension) gameObject.getInteligentDimension();
+				extendInteligentDimension.setGameObject(gameObject);
+				extendInteligentDimension.setMenu(this);
+			}
 			gameObject.setMenu(this);
 			objects.put(gameObject.getID(), gameObject);
 		} else {
