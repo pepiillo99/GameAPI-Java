@@ -39,7 +39,7 @@ public abstract class InteligentDimension {
 			Node inteligentResizeNode = DOMUtils.getChild(node, "ExtendInteligentDimension");
 			try {
 				InteligentExtendiblePosibility extendiblePosibility = InteligentExtendiblePosibility.valueOf(DOMUtils.getChild(inteligentResizeNode, "extendiblePosibility").getTextContent());
-				return new ExtendInteligentDimension(extendiblePosibility, build(DOMUtils.getChild(node, "axuDim"))); // they add object and screen/menu on add in screen/menu
+				return new ExtendInteligentDimension(extendiblePosibility, build(DOMUtils.getChild(node, "auxDim"))); // they add object and screen/menu on add in screen/menu
 			} catch (Exception ex) {
 				System.err.println(DOMUtils.getXML(node) + " no devolvió los valores esperados...");
 			}
