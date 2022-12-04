@@ -9,8 +9,8 @@ import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.Utils.RenderUtils;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
 import me.pepe.GameAPI.Utils.InteligentPositions.PixelInteligentPosition;
-import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
-import me.pepe.GameAPI.Utils.InteligentResize.PixelInteligentResize;
+import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
+import me.pepe.GameAPI.Utils.InteligentDimensions.PixelInteligentDimension;
 
 public class LoadingBar extends GameObject {
 	private int porcent = 0;
@@ -20,10 +20,10 @@ public class LoadingBar extends GameObject {
 	private Color porcentColor = Color.WHITE;
 	private Color completeColor = Color.GREEN;
 	private String textExtra = "";
-	public LoadingBar(int porcent, InteligentPosition intPos, Game game, InteligentResize intRes) {
+	public LoadingBar(int porcent, InteligentPosition intPos, Game game, InteligentDimension intRes) {
 		this(porcent, true, intPos, game, intRes);
 	}
-	public LoadingBar(int porcent, boolean showPorcent, InteligentPosition intPos, Game game, InteligentResize intRes) {
+	public LoadingBar(int porcent, boolean showPorcent, InteligentPosition intPos, Game game, InteligentDimension intRes) {
 		super(intPos, game, intRes);
 		this.porcent = porcent;
 		this.showPorcent = showPorcent;
@@ -34,14 +34,10 @@ public class LoadingBar extends GameObject {
 		if (isOnMenu()) {
 			if (hasInteligence()) {
 				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getX() + getMenu().getStartRender().getX()), (int) (getY() + getMenu().getStartRender().getY()), (int) getDimension().getX(), (int) getDimension().getY());
-			} else {
-				newover = false;
 			}
 		} else {
 			if (hasInteligence()) {
 				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
-			} else {
-				newover = false;
 			}
 		}
 		if (!over && newover) {
@@ -49,14 +45,13 @@ public class LoadingBar extends GameObject {
 		}
 		over = newover;
 	}
-
 	@Override
 	public void render(Graphics g) {
 		if (hasInteligence()) {
 			g.setColor(backgroundColor);
-			g.fillRect((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
-			g.drawRect((int) getX()-3, (int) getY() -3, (int) getDimension().getX() + 5, (int) getDimension().getY() + 5);
-			RenderUtils.fillRect(g, porcent != 100 ? porcentColor : completeColor, new PixelInteligentPosition((int) getX(), (int) getY()), new PixelInteligentResize((int) getDimension().getY(), (int) (getDimension().getX() * (porcent)) / 100));
+			g.fillRect((int) getX() + 3, (int) getY() + 3, (int) getDimension().getX() - 5, (int) getDimension().getY() - 5);
+			g.drawRect((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
+			RenderUtils.fillRect(g, porcent != 100 ? porcentColor : completeColor, new PixelInteligentPosition((int) getX() + 3, (int) getY() + 3), new PixelInteligentDimension((int) ((getDimension().getX() * (porcent)) / 100) - 5, (int) getDimension().getY() - 5));
 			if (showPorcent) {
 				g.setColor(porcent != 100 ? porcentColor : completeColor);
 				g.setFont(new Font("Aria", Font.BOLD, 11));

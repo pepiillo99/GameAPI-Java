@@ -5,6 +5,8 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public abstract class Screen {
 	private MouseInput mouseInput;
 	private GameLocation mouseLoc = new GameLocation(0, 0);
 	private KeyInput keyInput;
-	private List<GameObject> objects = new ArrayList<GameObject>();
+	private HashMap<String, GameObject> objects = new HashMap<String, GameObject>();
 	private List<Animation> animations = new ArrayList<Animation>();
 	private boolean loaded = false;
 	private int cursor = Cursor.DEFAULT_CURSOR;
@@ -100,8 +102,7 @@ public abstract class Screen {
 			}
 			if (object instanceof Menu) {
 				Menu menu = (Menu) object;
-				ArrayList<GameObject> objects_menu_copy = (ArrayList<GameObject>) ((ArrayList<GameObject>) menu.getGameObjects()).clone();
-				for (GameObject menu_object : objects_menu_copy) {
+				for (GameObject menu_object : menu.getGameObjectClonned()) {
 					menu_object.internalTick();
 					if (this.cursor == Cursor.DEFAULT_CURSOR && menu_object.getCursor() != Cursor.DEFAULT_CURSOR) {
 						cursor = menu_object.getCursor();
@@ -138,20 +139,28 @@ public abstract class Screen {
 	protected void setKeyInput(KeyInput keyInput) {
 		this.keyInput = keyInput;
 	}
-	public List<GameObject> getGameObjects() {
-		return objects;
+	public GameObject getGameObject(String id) {
+		if (objects.containsKey(id)) {
+			return objects.get(id);
+		}
+		return null;
+	}
+	public Collection<GameObject> getGameObjects() {
+		return objects.values();
 	}
 	public ArrayList<GameObject> getGameObjectClonned() {
-		return (ArrayList<GameObject>) ((ArrayList<GameObject>) objects).clone();
+		return new ArrayList<GameObject>(getGameObjects());
 	}
 	public void addGameObject(GameObject gameObject) {
-		if (!objects.contains(gameObject)) {
-			objects.add(gameObject);
+		if (!objects.containsKey(gameObject.getID())) {
+			objects.put(gameObject.getID(), gameObject);
+		} else {
+			throw new IllegalArgumentException("Ya hay un objeto con el nombre " + gameObject.getID() + " en la pantalla " + getClass().getSimpleName());
 		}
 	}
 	public void removeGameObject(GameObject gameObject) {
-		if (objects.contains(gameObject)) {
-			objects.remove(gameObject);
+		if (objects.containsKey(gameObject.getID())) {
+			objects.remove(gameObject.getID());
 		}
 	}
 	public void addAnimation(Animation anim) {
@@ -195,14 +204,14 @@ public abstract class Screen {
 		return mouseLoc;
 	}
 	public GameLocation getMouseLocation(Menu menu) {
-		return new GameLocation(mouseLoc.getX() - menu.getActualX(), mouseLoc.getY() - menu.getActualY());
+		return new GameLocation(mouseLoc.getX() - menu.getX(), mouseLoc.getY() - menu.getY());
 	}
 	public void restartObjects(Class<? extends GameObject> clase) {
-		Iterator<GameObject> iterator = objects.iterator();
+		Iterator<GameObject> iterator = getGameObjectClonned().iterator();
 		while (iterator.hasNext()) {
 			GameObject object = iterator.next();
 			if (object.getClass().getSuperclass() == clase) {
-				iterator.remove();
+				removeGameObject(object);
 			}
 		}
 	}

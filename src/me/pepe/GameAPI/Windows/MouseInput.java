@@ -4,6 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import me.pepe.GameAPI.Game.Objects.GameObject;
@@ -93,15 +94,15 @@ public abstract class MouseInput extends MouseAdapter {
 		}
 		if (selectedMenu != null) {
 			getResultMenu(selectedMenu).setClicked(true);
-			getResultMenu(selectedMenu).registerClick(x - selectedMenu.getActualX(), y - selectedMenu.getActualY());
+			getResultMenu(selectedMenu).registerClick((int) (x - selectedMenu.getX()), (int) (y - selectedMenu.getY()));
 			execMouseOverOnGameObject(getResultMenu(selectedMenu).getGameObjects());
 		} else {
 			execMouseOverOnGameObject(screen.getGameObjects());
 		}
 	   onButtonReleased(MouseButtons.getClickedButton(e.getButton()));
    }
-   private void execMouseOverOnGameObject(List<GameObject> gameObjects) {
-		for (GameObject object : gameObjects) {
+   private void execMouseOverOnGameObject(Collection<GameObject> collection) {
+		for (GameObject object : collection) {
 			if (object instanceof Button) {
 				Button button = (Button) object;
 				if (button.isOver()) {

@@ -7,8 +7,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
-import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
-import me.pepe.GameAPI.Utils.InteligentResize.PixelInteligentResize;
+import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
+import me.pepe.GameAPI.Utils.InteligentDimensions.PixelInteligentDimension;
 import me.pepe.GameAPI.Windows.Windows;
 
 public class RenderUtils {
@@ -30,15 +30,15 @@ public class RenderUtils {
 	public static void fillRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
 		fillRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
 	}
-	public static void fillRect(Graphics g, Color color, InteligentPosition pos, InteligentResize res) {
+	public static void fillRect(Graphics g, Color color, InteligentPosition pos, InteligentDimension res) {
 		fillRect(g, color, pos, res, 0, 0);
 	}
-	public static void fillRect(Graphics g, Color color, InteligentPosition pos, InteligentResize res, int resPorcent) {
+	public static void fillRect(Graphics g, Color color, InteligentPosition pos, InteligentDimension res, int resPorcent) {
 		fillRect(g, color, pos, res, resPorcent, resPorcent);
 	}
-	public static void fillRect(Graphics g, Color color, InteligentPosition pos, InteligentResize res, int resPorcentX, int resPorcentY) {
+	public static void fillRect(Graphics g, Color color, InteligentPosition pos, InteligentDimension res, int resPorcentX, int resPorcentY) {
 		g.setColor(color);
-		g.fillRect(pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcHeight(), res.calcWeidht());
+		g.fillRect(pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcWeidht(), res.calcHeight());
 	}
 	public static void fillRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
 		int x;
@@ -48,8 +48,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;
@@ -88,7 +88,7 @@ public class RenderUtils {
 	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
 		fillCenteredRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
 	}
-	public static void fillCenteredRect(Graphics g, Color color, InteligentPosition pos, InteligentResize res) {
+	public static void fillCenteredRect(Graphics g, Color color, InteligentPosition pos, InteligentDimension res) {
 		fillRect(g, color, pos, res, 50, 50);
 	}
 	public static void fillCenteredRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
@@ -99,8 +99,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;
@@ -139,15 +139,15 @@ public class RenderUtils {
 	public static void fillOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
 		fillOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
 	}
-	public static void fillOval(Graphics g, Color color, InteligentPosition pos, InteligentResize res) {
+	public static void fillOval(Graphics g, Color color, InteligentPosition pos, InteligentDimension res) {
 		fillOval(g, color, pos, res, 0, 0);
 	}
-	public static void fillOval(Graphics g, Color color, InteligentPosition pos, InteligentResize res, int resPorcent) {
+	public static void fillOval(Graphics g, Color color, InteligentPosition pos, InteligentDimension res, int resPorcent) {
 		fillOval(g, color, pos, res, resPorcent, resPorcent);
 	}
-	public static void fillOval(Graphics g, Color color, InteligentPosition pos, InteligentResize res, int resPorcentX, int resPorcentY) {
+	public static void fillOval(Graphics g, Color color, InteligentPosition pos, InteligentDimension res, int resPorcentX, int resPorcentY) {
 		g.setColor(color);
-		g.fillOval(pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcHeight(), res.calcWeidht());
+		g.fillOval(pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcWeidht(), res.calcHeight());
 	}
 	public static void fillOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
 		int x;
@@ -157,8 +157,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;
@@ -197,7 +197,7 @@ public class RenderUtils {
 	public static void fillCenteredOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
 		fillCenteredOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
 	}
-	public static void fillCenteredOval(Graphics g, Color color, InteligentPosition pos, InteligentResize res) {
+	public static void fillCenteredOval(Graphics g, Color color, InteligentPosition pos, InteligentDimension res) {
 		fillOval(g, color, pos, res, 50, 50);
 	}
 	public static void fillCenteredOval(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
@@ -208,8 +208,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;
@@ -248,15 +248,15 @@ public class RenderUtils {
 	public static void drawOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
 		drawOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
 	}
-	public static void drawOval(Graphics g, Color color, InteligentPosition pos, InteligentResize res) {
+	public static void drawOval(Graphics g, Color color, InteligentPosition pos, InteligentDimension res) {
 		drawOval(g, color, pos, res, 0, 0);
 	}
-	public static void drawOval(Graphics g, Color color, InteligentPosition pos, InteligentResize res, int resPorcent) {
+	public static void drawOval(Graphics g, Color color, InteligentPosition pos, InteligentDimension res, int resPorcent) {
 		drawOval(g, color, pos, res, resPorcent, resPorcent);
 	}
-	public static void drawOval(Graphics g, Color color, InteligentPosition pos, InteligentResize res, int resPorcentX, int resPorcentY) {
+	public static void drawOval(Graphics g, Color color, InteligentPosition pos, InteligentDimension res, int resPorcentX, int resPorcentY) {
 		g.setColor(color);
-		g.drawOval(pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcHeight(), res.calcWeidht());
+		g.drawOval(pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcWeidht(), res.calcHeight());
 	}
 	public static void drawOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
 		int x;
@@ -266,8 +266,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;
@@ -306,7 +306,7 @@ public class RenderUtils {
 	public static void drawCenteredOval(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
 		drawCenteredOval(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
 	}
-	public static void drawCenteredOval(Graphics g, Color color, InteligentPosition pos, InteligentResize res) {
+	public static void drawCenteredOval(Graphics g, Color color, InteligentPosition pos, InteligentDimension res) {
 		drawOval(g, color, pos, res, 50, 50);
 	}
 	public static void drawCenteredOval(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
@@ -317,8 +317,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;
@@ -357,15 +357,15 @@ public class RenderUtils {
 	public static void drawRect(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, Color color, RenderLimits limits) {
 		drawRect(windows, realX, realY, realHeight, realWight, g, color, ResizeType.NORMAL, limits, RenderType.PORCENT);
 	}
-	public static void drawRect(Graphics g, Color color, InteligentPosition pos, InteligentResize res) {
+	public static void drawRect(Graphics g, Color color, InteligentPosition pos, InteligentDimension res) {
 		drawRect(g, color, pos, res, 0, 0);
 	}
-	public static void drawRect(Graphics g, Color color, InteligentPosition pos, InteligentResize res, int resPorcent) {
+	public static void drawRect(Graphics g, Color color, InteligentPosition pos, InteligentDimension res, int resPorcent) {
 		drawRect(g, color, pos, res, resPorcent, resPorcent);
 	}
-	public static void drawRect(Graphics g, Color color, InteligentPosition pos, InteligentResize res, int resPorcentX, int resPorcentY) {
+	public static void drawRect(Graphics g, Color color, InteligentPosition pos, InteligentDimension res, int resPorcentX, int resPorcentY) {
 		g.setColor(color);
-		g.drawRect(pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcHeight(), res.calcWeidht());
+		g.drawRect(pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcWeidht(), res.calcHeight());
 	}
 	public static void drawRect(Windows windows, double realX, double realY, double realHeight,double realWight, Graphics g, Color color, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
 		int x;
@@ -375,8 +375,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;
@@ -408,7 +408,7 @@ public class RenderUtils {
 	}
 	public static void drawString(String s, Graphics g, Color color, InteligentPosition pos, Font font, int resPorcentX, int resPorcentY) {
 	    FontMetrics metrics = g.getFontMetrics(font);
-		PixelInteligentResize res = new PixelInteligentResize(metrics.stringWidth(s), metrics.getHeight());
+		PixelInteligentDimension res = new PixelInteligentDimension(metrics.stringWidth(s), metrics.getHeight());
 		g.setFont(font);
 		g.setColor(color);
 		g.drawString(s, pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY));
@@ -421,8 +421,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;
@@ -446,8 +446,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;
@@ -478,14 +478,14 @@ public class RenderUtils {
 	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf, RenderLimits limits) {
 		drawImage(windows, realX, realY, realHeight, realWight, g, buf, ResizeType.NORMAL, limits, RenderType.PORCENT);
 	}
-	public static void drawImage(Graphics g, BufferedImage buf, InteligentPosition pos, InteligentResize res) {
+	public static void drawImage(Graphics g, BufferedImage buf, InteligentPosition pos, InteligentDimension res) {
 		drawImage(g, buf, pos, res, 0, 0);
 	}
-	public static void drawImage(Graphics g, BufferedImage buf, InteligentPosition pos, InteligentResize res, int resPorcent) {
+	public static void drawImage(Graphics g, BufferedImage buf, InteligentPosition pos, InteligentDimension res, int resPorcent) {
 		drawImage(g, buf, pos, res, resPorcent, resPorcent);
 	}
-	public static void drawImage(Graphics g, BufferedImage buf, InteligentPosition pos, InteligentResize res, int resPorcentX, int resPorcentY) {
-		g.drawImage(buf, pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcHeight(), res.calcWeidht(), null);
+	public static void drawImage(Graphics g, BufferedImage buf, InteligentPosition pos, InteligentDimension res, int resPorcentX, int resPorcentY) {
+		g.drawImage(buf, pos.calculateX(res, resPorcentX), pos.calculateY(res, resPorcentY), res.calcWeidht(), res.calcHeight(), null);
 	}
 	public static void drawImage(Windows windows, double realX, double realY, double realHeight, double realWight, Graphics g, BufferedImage buf, ResizeType resizeType, RenderLimits limits, RenderType renderType) {
 		int x;
@@ -495,8 +495,8 @@ public class RenderUtils {
 			y = limits.getSizeY();
 		} else {
 			if (windows != null) {
-				x = windows.getActualXToPaint();
-				y = windows.getActualYToPaint();
+				x = windows.getXToPaint();
+				y = windows.getYToPaint();
 			} else {
 				x = 0;
 				y = 0;

@@ -6,28 +6,14 @@ import java.awt.Graphics;
 
 import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
-import me.pepe.GameAPI.Utils.GameLocation;
-import me.pepe.GameAPI.Utils.ObjectDimension;
-import me.pepe.GameAPI.Utils.RenderLimits;
+import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
-import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
 
 public abstract class SelectBox extends GameObject {
 	private boolean selected = false;
 	private boolean over = false;
-	private RenderLimits limits;
-	public SelectBox(GameLocation gameLocation, Game game, int size) {
-		super(gameLocation, game, new ObjectDimension(size, size));
-	}
-	public SelectBox(GameLocation gameLocation, Game game, int size, RenderLimits limits) {
-		super(gameLocation, game, new ObjectDimension(size, size));
-		this.limits = limits;
-	}
-	public SelectBox(InteligentPosition intPos, Game game, InteligentResize intRes) {
-		super(intPos, game, intRes);
-		if (intPos.hasRenderLimits()) {
-			this.limits = intPos.getRenderLimits();
-		}
+	public SelectBox(InteligentPosition intPos, Game game, InteligentDimension intDim) {
+		super(intPos, game, intDim);
 	}
 	@Override
 	public void tick() {
@@ -35,14 +21,10 @@ public abstract class SelectBox extends GameObject {
 		if (isOnMenu()) {
 			if (hasInteligence()) {
 				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getX() + getMenu().getStartRender().getX()), (int) (getY() + getMenu().getStartRender().getY()), (int) getDimension().getX(), (int) getDimension().getY());
-			} else {
-				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getActualX() + getMenu().getStartRender().getX()), (int) (getActualY() + getMenu().getStartRender().getY()), getActualDimensionX(), getActualDimensionY());
 			}
 		} else {
 			if (hasInteligence()) {
 				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
-			} else {
-				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
 			}
 		}
 		if (!over && newover) {
@@ -55,8 +37,6 @@ public abstract class SelectBox extends GameObject {
 		g.setColor(selected ? Color.GRAY : Color.DARK_GRAY);
 		if (hasInteligence()) {
 			g.fillRect((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
-		} else {
-			g.fillRect(getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
 		}
 	}
 	@Override
@@ -74,22 +54,6 @@ public abstract class SelectBox extends GameObject {
 	}
 	public boolean isOver() {
 		return over;
-	}
-	public int getActualX() {
-		return (int) (x * (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint()) / 100) + (limits != null ? limits.getX() : 0);
-	}
-	public int getActualY() {
-		return (int) (y * (limits != null ? limits.getSizeY() : getGame().getWindows().getActualYToPaint()) / 100) + (limits != null ? limits.getY() : 0);
-	}
-	public int getActualDimensionX() {
-		int actualX = (int) (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint());
-		int actualY = (int) (limits != null ? limits.getSizeY() : getGame().getWindows().getActualYToPaint());
-		return (int) (getDimension().getX() * (actualY > actualX ? actualX : actualY) / 100);
-	}
-	public int getActualDimensionY() {
-		int actualX = (int) (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint());
-		int actualY = (int) (limits != null ? limits.getSizeY() : getGame().getWindows().getActualYToPaint());
-		return (int) (getDimension().getY() * (actualY > actualX ? actualX : actualY) / 100);
 	}
 	public void select(boolean selected) {
 		this.selected = selected;

@@ -62,7 +62,7 @@ public class Game extends Canvas implements Runnable {
 		try {
 			Graphics g = bs.getDrawGraphics();
 			g.setColor(getScreen().getBackground());
-			g.fillRect(0, 0, getWindows().getActualX(), getWindows().getActualY());
+			g.fillRect(0, 0, getWindows().getX(), getWindows().getY());
 			//System.out.println(System.currentTimeMillis() - start + "ms en dibujar el rectangulo de fondo");
 			if (screenLoaded) {
 				getScreen().buildLevel(g);

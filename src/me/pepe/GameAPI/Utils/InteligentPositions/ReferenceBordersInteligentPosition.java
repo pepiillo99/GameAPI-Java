@@ -49,13 +49,13 @@ public class ReferenceBordersInteligentPosition extends InteligentPosition {
 		} else {
 			if (windows != null) {
 				if (vertical.equals(VerticalBorders.RIGHT)) {
-					return windows.getActualXToPaint() - x;
+					return windows.getXToPaint() - x;
 				} else if (vertical.equals(VerticalBorders.LEFT)) {
 					return x;
 				}
 			} else if (menu != null ) {
 				if (vertical.equals(VerticalBorders.RIGHT)) {
-					return menu.getActualDimensionX() - x;
+					return (int) (menu.getDimension().getX() - x);
 				} else if (vertical.equals(VerticalBorders.LEFT)) {
 					return x;
 				}
@@ -67,20 +67,20 @@ public class ReferenceBordersInteligentPosition extends InteligentPosition {
 	protected int calcY() {
 		if (hasRenderLimits()) {
 			if (horizontal.equals(HorizontalBorders.DOWN)) {
-				return (getRenderLimits().getX() + getRenderLimits().getSizeX()) - y;
+				return (getRenderLimits().getY() + getRenderLimits().getSizeY()) - y;
 			} else if (horizontal.equals(HorizontalBorders.UP)) {
 				return y;
 			}		
 		} else {
 			if (windows != null) {
 				if (horizontal.equals(HorizontalBorders.DOWN)) {
-					return windows.getActualYToPaint() - y;
+					return windows.getYToPaint() - y;
 				} else if (horizontal.equals(HorizontalBorders.UP)) {
 					return y;
 				}
 			} else if (menu != null ) {
 				if (horizontal.equals(HorizontalBorders.DOWN)) {
-					return menu.getActualDimensionY() - y;
+					return (int) (menu.getDimension().getY() - y);
 				} else if (horizontal.equals(HorizontalBorders.UP)) {
 					return y;
 				}

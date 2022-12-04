@@ -11,10 +11,8 @@ import java.awt.image.BufferedImage;
 import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.Utils.GameLocation;
-import me.pepe.GameAPI.Utils.ObjectDimension;
-import me.pepe.GameAPI.Utils.RenderLimits;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
-import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
+import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
 
 public abstract class TextBox extends GameObject {
 	private String text = "";
@@ -28,27 +26,11 @@ public abstract class TextBox extends GameObject {
 	private boolean over = false;
 	private boolean drawLine = false;
 	private long timeToDrawLine = 0;
-	private RenderLimits limits;
-	public TextBox(String text, GameLocation gameLocation, Game game, ObjectDimension dimension) {
-		this(text, gameLocation, game, dimension, null, false);
+	public TextBox(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
+		this(text, intPos, game, intDim, false);
 	}
-	public TextBox(String text, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
-		this(text, gameLocation, game, dimension, limits, false);
-	}
-	public TextBox(String text, GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits, boolean ocult) {
-		super(gameLocation, game, dimension);
-		this.limits = limits;
-		this.text = text;
-		this.ocult = ocult;
-	}
-	public TextBox(String text, InteligentPosition intPos, Game game, InteligentResize intRes) {
-		this(text, intPos, game, intRes, false);
-	}
-	public TextBox(String text, InteligentPosition intPos, Game game, InteligentResize intRes, boolean ocult) {
-		super(intPos, game, intRes);
-		if (intPos.hasRenderLimits()) {
-			this.limits = intPos.getRenderLimits();
-		}
+	public TextBox(String text, InteligentPosition intPos, Game game, InteligentDimension intDim, boolean ocult) {
+		super(intPos, game, intDim);
 		this.text = text;
 		this.ocult = ocult;
 	}
@@ -58,14 +40,10 @@ public abstract class TextBox extends GameObject {
 		if (isOnMenu()) {
 			if (hasInteligence()) {
 				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getX() + getMenu().getStartRender().getX()), (int) (getY() + getMenu().getStartRender().getY()), (int) getDimension().getX(), (int) getDimension().getY());
-			} else {
-				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getActualX() + getMenu().getStartRender().getX()), (int) (getActualY() + getMenu().getStartRender().getY()), getActualDimensionX(), getActualDimensionY());
 			}
 		} else {
 			if (hasInteligence()) {
 				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
-			} else {
-				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
 			}
 		}
 		over = newover;
@@ -81,8 +59,6 @@ public abstract class TextBox extends GameObject {
 	public void render(Graphics g) {
 		if (hasInteligence()) {
 			g.drawImage(createImage((int) getDimension().getX(), (int) getDimension().getY()), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY(), null);
-		} else {
-			g.drawImage(createImage(getActualDimensionX(), getActualDimensionY()), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY(), null);
 		}	
 	}
 	public boolean isFocused() {
@@ -113,7 +89,7 @@ public abstract class TextBox extends GameObject {
 		} else if (key == 39) {
 			setCaretPosition(getCaretPosition() + 1);
 		} else if (key == 8) {
-			if (!text.isEmpty()) {
+			if (!text.isEmpty() && caret != 0) {
 				text = text.substring(0, caret-1) + text.substring(caret, text.length());
 				caret--;	
 			}
@@ -129,8 +105,6 @@ public abstract class TextBox extends GameObject {
 		int x = 0;
 		if (hasInteligence()) {
 			x = (int) (getX());
-		} else {
-			x = (int) (getActualX());
 		}
 		if (isOnMenu()) {
 			mosLoc = getGame().getScreen().getMouseLocation(getMenu());
@@ -141,23 +115,7 @@ public abstract class TextBox extends GameObject {
 	public void unFocus() {
 		focused = false;
 	}
-	public int getActualX() {
-		return (int) (x * (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint()) / 100) + (limits != null ? limits.getX() : 0);
-	}
-	public int getActualY() {
-		return (int) (y * (limits != null ? limits.getSizeY() : getGame().getWindows().getActualYToPaint()) / 100) + (limits != null ? limits.getY() : 0);
-	}
-	public int getActualDimensionX() {
-		int actualX = (int) (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint());
-		int actualY = (int) (limits != null ? limits.getSizeY() : getGame().getWindows().getActualYToPaint());
-		return (int) (getDimension().getX() * (actualY > actualX ? actualX : actualY) / 100);
-	}
-	public int getActualDimensionY() {
-		int actualX = (int) (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint());
-		int actualY = (int) (limits != null ? limits.getSizeY() : getGame().getWindows().getActualYToPaint());
-		return (int) (getDimension().getY() * (actualY > actualX ? actualX : actualY) / 100);
-	}
-	private BufferedImage createImage (int width, int height) {
+	private BufferedImage createImage(int width, int height) {
 		BufferedImage image = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = image.createGraphics();
 		FontMetrics fontMetrics = g.getFontMetrics(font);
@@ -214,6 +172,18 @@ public abstract class TextBox extends GameObject {
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+	public String getPlaceholder() {
+		return placeholder;
+	}
+	public void setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
+	}
+	public Font getFont() {
+		return font;
+	}
+	public void setFont(Font font) {
+		this.font = font;
 	}
 	public abstract void onFocus();
 }

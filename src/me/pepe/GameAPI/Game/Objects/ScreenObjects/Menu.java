@@ -4,91 +4,38 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.TextureManager.Animation;
 import me.pepe.GameAPI.Utils.GameLocation;
-import me.pepe.GameAPI.Utils.ObjectDimension;
-import me.pepe.GameAPI.Utils.RenderLimits;
+import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
-import me.pepe.GameAPI.Utils.InteligentResize.InteligentResize;
 
 public abstract class Menu extends GameObject {
 	private boolean show = true;
 	private boolean over = false;
-	private RenderLimits limits;
-	private RenderLimits menuRenderLimits;
-	private List<GameObject> objects = new ArrayList<GameObject>();
+	private HashMap<String, GameObject> objects = new HashMap<String, GameObject>();
 	private List<Animation> animations = new ArrayList<Animation>();
 	private GameLocation startRender = new GameLocation(0, 0);
 	private int maxMoveX, minMoveX, maxMoveY, minMoveY = 0;
 	private boolean clicked = false;
-	public Menu(GameLocation gameLocation, Game game, ObjectDimension dimension) {
-		this(gameLocation, game, dimension, null);
-	}
-	public Menu(GameLocation gameLocation, Game game, ObjectDimension dimension, RenderLimits limits) {
-		super(gameLocation, game, dimension);
-		this.limits = limits;
-		this.menuRenderLimits = new RenderLimits() {
-			@Override
-			protected int calcX(int x, int y) {
-				return 0;
-			}
-			@Override
-			protected int calcY(int x, int y) {
-				return 0;
-			}
-			@Override
-			protected int calcSizeX(int x, int y) {
-				return getActualDimensionX();
-			}
-			@Override
-			protected int calcSizeY(int x, int y) {
-				return getActualDimensionY();
-			}			
-		};
-	}
-	public Menu(InteligentPosition intPos, Game game, InteligentResize intRes) {
-		super(intPos, game, intRes);
-		if (intPos.hasRenderLimits()) {
-			this.limits = intPos.getRenderLimits();
-		}
-		this.menuRenderLimits = new RenderLimits() {
-			@Override
-			protected int calcX(int x, int y) {
-				return 0;
-			}
-			@Override
-			protected int calcY(int x, int y) {
-				return 0;
-			}
-			@Override
-			protected int calcSizeX(int x, int y) {
-				return (int) getDimension().getX();
-			}
-			@Override
-			protected int calcSizeY(int x, int y) {
-				return (int) getDimension().getY();
-			}			
-		};
+	public Menu(InteligentPosition intPos, Game game, InteligentDimension intDim) {
+		super(intPos, game, intDim);
 	}
 	@Override
 	public void tick() {
-		menuRenderLimits.calc(getActualDimensionX(), getActualDimensionY());
 		boolean newover = false;
 		if (isOnMenu()) {
 			if (hasInteligence()) {
 				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getX() + getMenu().getStartRender().getX()), (int) (getY() + getMenu().getStartRender().getY()), (int) getDimension().getX(), (int) getDimension().getY());
-			} else {
-				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(getMenu()), (int) (getActualX() + getMenu().getStartRender().getX()), (int) (getActualY() + getMenu().getStartRender().getY()), getActualDimensionX(), getActualDimensionY());
 			}
 		} else {
 			if (hasInteligence()) {
 				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
-			} else {
-				newover = getGame().getScreen().isTouch(getGame().getScreen().getMouseLocation(), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY());
 			}
 		}
 		over = newover;
@@ -105,8 +52,6 @@ public abstract class Menu extends GameObject {
 		if (show) {
 			if (hasInteligence()) {
 				g.drawImage(internalBuild((int) getDimension().getX(), (int) getDimension().getY()), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY(), null);
-			} else {
-				g.drawImage(internalBuild(getActualDimensionX(), getActualDimensionY()), getActualX(), getActualY(), getActualDimensionX(), getActualDimensionY(), null);
 			}
 		}
 	}
@@ -121,9 +66,6 @@ public abstract class Menu extends GameObject {
 		for (GameObject go : getGameObjects()) {
 			go.onQuitScreen();
 		}
-	}
-	public RenderLimits getMenuRenderLimits() {
-		return menuRenderLimits;
 	}
 	public GameLocation getStartRender() {
 		return startRender;
@@ -153,8 +95,7 @@ public abstract class Menu extends GameObject {
 		BufferedImage image = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = image.createGraphics();
 		build(g);
-		ArrayList<GameObject> objects_copy = (ArrayList<GameObject>) ((ArrayList<GameObject>) objects).clone();
-		for (GameObject object : objects_copy) {
+		for (GameObject object : getGameObjectClonned()) {
 			object.internalRender(g);
 		}
 		ArrayList<Animation> animation_copy = (ArrayList<Animation>) ((ArrayList<Animation>) animations).clone();
@@ -170,34 +111,29 @@ public abstract class Menu extends GameObject {
 		return finalImage;
 	}
 	public abstract void build(Graphics g);
-	public int getActualX() {
-		return (int) (x * (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint()) / 100) + (limits != null ? limits.getX() : 0);
+	public GameObject getGameObject(String id) {
+		if (objects.containsKey(id)) {
+			return objects.get(id);
+		}
+		return null;
 	}
-	public int getActualY() {
-		return (int) (y * (limits != null ? limits.getSizeY() : getGame().getWindows().getActualYToPaint()) / 100) + (limits != null ? limits.getY() : 0);
+	public Collection<GameObject> getGameObjects() {
+		return objects.values();
 	}
-	public int getActualDimensionX() {
-		int actualX = (int) (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint());
-		int actualY = (int) (limits != null ? limits.getSizeY() : getGame().getWindows().getActualYToPaint());
-		return (int) (getDimension().getX() * (actualY > actualX ? actualX : actualY) / 100);
-	}
-	public int getActualDimensionY() {
-		int actualX = (int) (limits != null ? limits.getSizeX() : getGame().getWindows().getActualXToPaint());
-		int actualY = (int) (limits != null ? limits.getSizeY() : getGame().getWindows().getActualYToPaint());
-		return (int) (getDimension().getY() * (actualY > actualX ? actualX : actualY) / 100) - 1;
-	}
-	public List<GameObject> getGameObjects() {
-		return objects;
+	public ArrayList<GameObject> getGameObjectClonned() {
+		return new ArrayList<GameObject>(getGameObjects());
 	}
 	public void addGameObject(GameObject gameObject) {
-		if (!objects.contains(gameObject)) {
+		if (!objects.containsKey(gameObject.getID())) {
 			gameObject.setMenu(this);
-			objects.add(gameObject);
+			objects.put(gameObject.getID(), gameObject);
+		} else {
+			throw new IllegalArgumentException("Ya hay un objeto con el nombre " + gameObject.getID() + " en el menu " + getID());
 		}
 	}
 	public void removeGameObject(GameObject gameObject) {
-		if (objects.contains(gameObject)) {
-			objects.remove(gameObject);
+		if (objects.containsKey(gameObject.getID())) {
+			objects.remove(gameObject.getID());
 		}
 	}
 	public void addAnimation(Animation anim) {

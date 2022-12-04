@@ -14,6 +14,7 @@ public class Windows {
 	private String title;
 	private int x;
 	private int y;
+	private Dimension minSize = new Dimension(500, 500);
 	public long start = 0;
 	private boolean canFullScrenable = false;
 	public Windows(String title, int x, int y, Image icon, Game game) {
@@ -40,28 +41,16 @@ public class Windows {
 		return title;
 	}
 	public int getX() {
-		return x;
-	}
-	public int getY() {
-		return y;
-	}
-	public int getActualX() {
 		return frame.getWidth();
 	}
-	public int getActualY() {
+	public int getY() {
 		return frame.getHeight();
 	}
 	public int getXToPaint() {
-		return x - 15;
+		return getX() - (isFullScreen() ? 0 :  16);
 	}
 	public int getYToPaint() {
-		return y - 35;
-	}
-	public int getActualXToPaint() {
-		return getActualX() - 15;
-	}
-	public int getActualYToPaint() {
-		return getActualY() - 35;
+		return getY() - (isFullScreen() ? 0 :  39);
 	}
 	public Dimension getSize() {
 		return frame.getSize();
@@ -72,8 +61,8 @@ public class Windows {
 			frame.setMinimumSize(new Dimension(x, y));
 			frame.setMaximumSize(new Dimension(x, y));
 		} else {
-			frame.setMinimumSize(new Dimension(50, 50));
-			frame.setMaximumSize(new Dimension(1000, 1000));
+			frame.setMinimumSize(minSize);
+			frame.setMaximumSize(null); // infinito
 		}
 	}
 	public void setVisible() {
@@ -108,6 +97,7 @@ public class Windows {
 		game.requestFocus();
 	}
 	public void setMinSize(int x, int y) {
+		minSize = new Dimension(x, y);
 		frame.setMinimumSize(new Dimension(x, y));
 	}
 	public void setCursor(int cursor) {
