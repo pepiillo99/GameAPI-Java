@@ -52,6 +52,8 @@ public abstract class GameObject {
 		this.y = gameLocation.getY();
 		if (id == null || id.isEmpty()) {
 			this.id = this.getClass().getSuperclass().getSimpleName() + "-" + game.getNextObjectID();
+		} else {
+			this.id = id;
 		}
 		this.dimension = dimension;
 		hitBox = new Rectangle((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
