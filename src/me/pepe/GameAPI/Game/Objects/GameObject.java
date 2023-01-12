@@ -202,7 +202,7 @@ public abstract class GameObject {
 		return intPostOffSetX;
 	}
 	/*
-	 * Para que el objeto está centrado habrá que ponerle -50% (porque se empieza a pintar desde el 0,0)
+	 * Para que el objeto esté centrado habrá que ponerle -50% (porque se empieza a pintar desde el 0,0)
 	 */
 	public void setIntPostOffSetX(int intPostOffSetX) {
 		this.intPostOffSetX = intPostOffSetX;
