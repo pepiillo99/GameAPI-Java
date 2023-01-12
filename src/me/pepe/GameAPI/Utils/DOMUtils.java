@@ -39,7 +39,7 @@ public class DOMUtils {
 			}
 			return nodes;
 		} else {
-			return null;
+			return new ArrayList<Node>();
 		}
 	}
 	// coge un hijo en especifico de un nodo

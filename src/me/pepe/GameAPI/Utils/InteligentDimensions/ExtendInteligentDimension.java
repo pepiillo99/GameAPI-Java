@@ -9,6 +9,8 @@ public class ExtendInteligentDimension extends InteligentDimension {
 	private Screen screen;
 	private GameObject object;
 	private InteligentExtendiblePosibility extendiblePosibility = InteligentExtendiblePosibility.BOTH;
+	private int offW = 0;
+	private int offH = 0;
 	private InteligentDimension auxDim;
 	public ExtendInteligentDimension() { // define menu or screen and object next? (both)
 		
@@ -38,7 +40,7 @@ public class ExtendInteligentDimension extends InteligentDimension {
 	@Override
 	public int calcWeidht() {
 		if (extendiblePosibility.equals(InteligentExtendiblePosibility.BOTH) || extendiblePosibility.equals(InteligentExtendiblePosibility.WEIDHT)) {
-			return (int) (getMaxWeidht() - object.getX());
+			return (int) ((getMaxWeidht() - object.getX()) + 1) - offW;
 		} else if (extendiblePosibility.equals(InteligentExtendiblePosibility.HEIGHT)) {
 			if (auxDim != null) {
 				return auxDim.calcWeidht();
@@ -49,7 +51,7 @@ public class ExtendInteligentDimension extends InteligentDimension {
 	@Override
 	public int calcHeight() {
 		if (extendiblePosibility.equals(InteligentExtendiblePosibility.BOTH) || extendiblePosibility.equals(InteligentExtendiblePosibility.HEIGHT)) {
-			return (int) (getMaxHeight() - object.getY());
+			return (int) ((getMaxHeight() - object.getY()) + 1) - offH;
 		} else if (extendiblePosibility.equals(InteligentExtendiblePosibility.WEIDHT)) {
 			if (auxDim != null) {
 				return auxDim.calcHeight();

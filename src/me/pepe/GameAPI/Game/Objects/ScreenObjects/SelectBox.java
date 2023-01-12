@@ -13,7 +13,10 @@ public abstract class SelectBox extends GameObject {
 	private boolean selected = false;
 	private boolean over = false;
 	public SelectBox(InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(intPos, game, intDim);
+		this("", intPos, game, intDim);
+	}
+	public SelectBox(String id, InteligentPosition intPos, Game game, InteligentDimension intDim) {
+		super(id, intPos, game, intDim);
 	}
 	@Override
 	public void tick() {

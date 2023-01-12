@@ -11,6 +11,9 @@ public abstract class Button extends GameObject {
 	private boolean over = false;
 	private boolean show = true;
 	public Button(InteligentPosition intPos, Game game, InteligentDimension intDim) {
+		this("", intPos, game, intDim);
+	}
+	public Button(String id, InteligentPosition intPos, Game game, InteligentDimension intDim) {
 		super(intPos, game, intDim);
 	}
 	public boolean isShow() {

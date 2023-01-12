@@ -21,7 +21,10 @@ public abstract class TextButtonStyle1 extends TextButton {
 	private Color toBoxColor = Color.YELLOW;
 	private Color toLetterColor = Color.BLACK;
 	public TextButtonStyle1(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(text, intPos, game, intDim);
+		this("", text, intPos, game, intDim);
+	}
+	public TextButtonStyle1(String id, String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
+		super(id, text, intPos, game, intDim);
 		setBoxColor(Color.PINK);
 		setLetterColor(Color.WHITE);
 	}

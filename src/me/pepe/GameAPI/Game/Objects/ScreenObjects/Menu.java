@@ -3,15 +3,21 @@ package me.pepe.GameAPI.Game.Objects.ScreenObjects;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.TextureManager.Animation;
+import me.pepe.GameAPI.Utils.DOMUtils;
 import me.pepe.GameAPI.Utils.GameLocation;
+import me.pepe.GameAPI.Utils.Margin;
 import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
@@ -22,10 +28,14 @@ public abstract class Menu extends GameObject {
 	private HashMap<String, GameObject> objects = new HashMap<String, GameObject>();
 	private List<Animation> animations = new ArrayList<Animation>();
 	private GameLocation startRender = new GameLocation(0, 0);
-	private int maxMoveX, minMoveX, maxMoveY, minMoveY = 0;
+	private int maxMoveX, maxMoveY = 0;
 	private boolean clicked = false;
+	private Margin margin = new Margin();
 	public Menu(InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(intPos, game, intDim);
+		this("", intPos, game, intDim);
+	}
+	public Menu(String id, InteligentPosition intPos, Game game, InteligentDimension intDim) {
+		super(id, intPos, game, intDim);
 	}
 	@Override
 	public void tick() {
@@ -48,11 +58,12 @@ public abstract class Menu extends GameObject {
 			go.internalTick();
 		}
 	}
+	// hacer posibilidad de que el min/max move sea automatico o manual
 	@Override
 	public void render(Graphics g) {
 		if (show) {
 			if (hasInteligence()) {
-				g.drawImage(internalBuild((int) getDimension().getX(), (int) getDimension().getY()), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY(), null);
+				g.drawImage(internalBuild((int) getDimension().getX(), (int) getDimension().getY()), (int) getX(), (int) getY(), null);
 			}
 		}
 	}
@@ -71,29 +82,38 @@ public abstract class Menu extends GameObject {
 	public GameLocation getStartRender() {
 		return startRender;
 	}
+	public int calcMaxMoveX() {
+		int result = 0;
+		for (GameObject object : getGameObjects()) {
+			int endX = (int) (object.getX() + object.getDimension().getX() - getDimension().getX());
+			if (result < endX) {
+				result = endX;
+			}
+		}
+		return result;
+	}
 	public void setStartRender(GameLocation startRender) {
 		double x = startRender.getX();
 		double y = startRender.getY();
 		if (startRender.getX() < maxMoveX) {
 			x = maxMoveX;
-		} else if (startRender.getX() > minMoveX) {
-			x = minMoveX;
+		} else if (startRender.getX() > 0) {
+			x = 0;
 		}
 		if (startRender.getY() < maxMoveY) {
 			y = maxMoveY;
-		} else if (startRender.getY() > minMoveY) {
-			y = minMoveY;
+		} else if (startRender.getY() > 0) {
+			y = 0;
 		}
+		System.out.println("StartRender: " + x + " - " + y);
 		this.startRender = new GameLocation(x, y);
 	}
-	public void setMoveLimits(int maxMoveX, int minMoveX, int maxMoveY, int minMoveY) {
+	public void setMoveLimits(int maxMoveX, int maxMoveY) {
 		this.maxMoveX = maxMoveX;
-		this.minMoveX = minMoveX;
 		this.maxMoveY = maxMoveY;
-		this.minMoveY = minMoveY;
 	}
 	private BufferedImage internalBuild(int width, int height) {
-		BufferedImage image = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage image = new BufferedImage(width <= 0 ? 1 : width + Math.abs((int) startRender.getX()), height <= 0 ? 1 : height + Math.abs((int) startRender.getY()), BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = image.createGraphics();
 		build(g);
 		for (GameObject object : getGameObjectClonned()) {
@@ -104,10 +124,10 @@ public abstract class Menu extends GameObject {
 			anim.render(g);
 		}
 		g.dispose();
-		BufferedImage finalImage = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage finalImage = new BufferedImage(width <= 0 ? 1 : width + Math.abs((int) startRender.getX()), height <= 0 ? 1 : height + Math.abs((int) startRender.getY()), BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2 = finalImage.createGraphics();
 		g2.fillRect(0, 0, width-1, height-1);
-		g2.drawImage(image, 0 + ((int) startRender.getX()), 0 + ((int) startRender.getY()), width <= 0 ? 1 : width, height <= 0 ? 1 : height, null);
+		g2.drawImage(image, 0 + ((int) startRender.getX()), 0 + ((int) startRender.getY()), null);
 		g.dispose();
 		return finalImage;
 	}
@@ -168,4 +188,19 @@ public abstract class Menu extends GameObject {
 		onClick(x, y);
 	}
 	public abstract void onClick(int x, int y);
+	public Margin getMargin() {
+		return margin;
+	}
+	public void setMargin(Margin margin) {
+		this.margin = margin;
+	}
+	public void loadFromXML(String filePath) {
+		File file = new File(this.getClass().getClassLoader().getResource(filePath).getPath().replace("%c3%b3", "ó").replace("bin", "resources"));
+		System.out.println("Menu loaded from file " + file.getAbsolutePath());
+		Document doc = DOMUtils.abrirDOM(file);
+		Node node = doc.getFirstChild();
+		for (Node object : DOMUtils.getChildrens(DOMUtils.getChild(node, "objects"))) {
+			GameObject.build(this, this, getGame(), object);
+		}
+	}
 }

@@ -21,10 +21,13 @@ public class LoadingBar extends GameObject {
 	private Color completeColor = Color.GREEN;
 	private String textExtra = "";
 	public LoadingBar(int porcent, InteligentPosition intPos, Game game, InteligentDimension intRes) {
-		this(porcent, true, intPos, game, intRes);
+		this("", porcent, true, intPos, game, intRes);
 	}
 	public LoadingBar(int porcent, boolean showPorcent, InteligentPosition intPos, Game game, InteligentDimension intRes) {
-		super(intPos, game, intRes);
+		this("", porcent, showPorcent, intPos, game, intRes);
+	}
+	public LoadingBar(String id, int porcent, boolean showPorcent, InteligentPosition intPos, Game game, InteligentDimension intRes) {
+		super(id, intPos, game, intRes);
 		this.porcent = porcent;
 		this.showPorcent = showPorcent;
 	}
@@ -49,9 +52,11 @@ public class LoadingBar extends GameObject {
 	public void render(Graphics g) {
 		if (hasInteligence()) {
 			g.setColor(backgroundColor);
-			g.fillRect((int) getX() + 3, (int) getY() + 3, (int) getDimension().getX() - 5, (int) getDimension().getY() - 5);
-			g.drawRect((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
-			RenderUtils.fillRect(g, porcent != 100 ? porcentColor : completeColor, new PixelInteligentPosition((int) getX() + 3, (int) getY() + 3), new PixelInteligentDimension((int) ((getDimension().getX() * (porcent)) / 100) - 5, (int) getDimension().getY() - 5));
+			g.fillRect((int) getX() + 3, (int) getY() + 3, (int) getDimension().getX() - 7, (int) getDimension().getY() - 7);
+			g.drawRect((int) getX(), (int) getY(), (int) getDimension().getX() - 2, (int) getDimension().getY() - 2);
+			if (porcent != 0) {
+				RenderUtils.fillRect(g, porcent != 100 ? porcentColor : completeColor, new PixelInteligentPosition((int) getX() + 3, (int) getY() + 3), new PixelInteligentDimension((int) (((getDimension().getX() - 7) * (porcent)) / 100), (int) getDimension().getY() - 7));
+			}
 			if (showPorcent) {
 				g.setColor(porcent != 100 ? porcentColor : completeColor);
 				g.setFont(new Font("Aria", Font.BOLD, 11));

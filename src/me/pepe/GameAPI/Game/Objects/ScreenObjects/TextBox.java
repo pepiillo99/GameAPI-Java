@@ -27,10 +27,13 @@ public abstract class TextBox extends GameObject {
 	private boolean drawLine = false;
 	private long timeToDrawLine = 0;
 	public TextBox(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this(text, intPos, game, intDim, false);
+		this(null, text, intPos, game, intDim, false);
 	}
 	public TextBox(String text, InteligentPosition intPos, Game game, InteligentDimension intDim, boolean ocult) {
-		super(intPos, game, intDim);
+		this(null, text, intPos, game, intDim, ocult);
+	}
+	public TextBox(String id, String text, InteligentPosition intPos, Game game, InteligentDimension intDim, boolean ocult) {
+		super(id, intPos, game, intDim);
 		this.text = text;
 		this.ocult = ocult;
 	}
@@ -136,7 +139,7 @@ public abstract class TextBox extends GameObject {
 		}
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
-		int form = fontMetrics.getHeight() - 6;
+		int form = fontMetrics.getHeight() - 8;
 		//System.out.println(fontMetrics.getHeight() + " - " + height + " - " + (form));
 		String text = getText();
 		if (ocult) {
@@ -157,7 +160,7 @@ public abstract class TextBox extends GameObject {
 			if (drawLine) {
 				int posLine = fontMetrics.stringWidth(text.substring(0, caret));
 				g.setColor(Color.BLACK);
-				g.drawLine(posLine+1, 0, posLine+1, height);
+				g.drawLine(posLine+2, 0, posLine+2, height);
 			}
 			if (timeToDrawLine - System.currentTimeMillis() <= 0) {
 				drawLine = !drawLine;

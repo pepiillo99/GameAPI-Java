@@ -4,22 +4,28 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Menu;
 import me.pepe.GameAPI.TextureManager.Animation;
+import me.pepe.GameAPI.Utils.DOMUtils;
 import me.pepe.GameAPI.Utils.FirstRender;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension;
 import me.pepe.GameAPI.Windows.KeyInput;
 import me.pepe.GameAPI.Windows.MouseInput;
 import me.pepe.GameAPI.Windows.Windows;
+import me.pepe.GameAPI.Windows.Buttons.MouseButtons;
 
 public abstract class Screen {
 	private Windows windows;
@@ -43,6 +49,28 @@ public abstract class Screen {
 			public void onKeyPressed(int key) {}
 			@Override
 			public void onKeyReleased(int key) {}		
+		};
+		this.mouseInput = new MouseInput(this) {
+			@Override
+			public void tick() {
+				
+			}
+			@Override
+			public void onClick(MouseButtons mouseButton) {
+				
+			}
+			@Override
+			public void onWheelMoved(MouseButtons mouseButton) {
+				
+			}
+			@Override
+			public void onButtonPressed(MouseButtons mouseButton) {
+				
+			}
+			@Override
+			public void onButtonReleased(MouseButtons mouseButton) {
+				
+			}			
 		};
 	}
 	public Screen(Windows windows, Game game, MouseInput mouseInput, KeyInput keyInput) {
@@ -235,5 +263,14 @@ public abstract class Screen {
 	}
 	public void setFirstRender(FirstRender fRender) {
 		this.fRender = fRender;
+	}
+	public void loadFromXML(String filePath) {
+		File file = new File(this.getClass().getClassLoader().getResource(filePath).getPath().replace("%c3%b3", "ó").replace("bin", "resources"));
+		System.out.println("Screen loaded from file " + file.getAbsolutePath());
+		Document doc = DOMUtils.abrirDOM(file);
+		Node node = doc.getFirstChild();
+		for (Node object : DOMUtils.getChildrens(DOMUtils.getChild(node, "objects"))) {
+			GameObject.build(this, this, getGame(), object);
+		}
 	}
 }

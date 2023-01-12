@@ -50,7 +50,7 @@ public abstract class GameObject {
 		this.game = game;
 		this.x = gameLocation.getX();
 		this.y = gameLocation.getY();
-		if (id == null) {
+		if (id == null || id.isEmpty()) {
 			this.id = this.getClass().getSuperclass().getSimpleName() + "-" + game.getNextObjectID();
 		}
 		this.dimension = dimension;
@@ -58,8 +58,10 @@ public abstract class GameObject {
 	}
 	public GameObject(String id, InteligentPosition intPos, Game game, InteligentDimension intDim) {
 		this.game = game;
-		if (id == null) {
+		if (id == null || id.isEmpty()) {
 			this.id = this.getClass().getSuperclass().getSimpleName() + "-" + game.getNextObjectID();
+		} else {
+			this.id = id;
 		}
 		this.intPos = intPos;
 		this.intDim = intDim;
@@ -198,7 +200,7 @@ public abstract class GameObject {
 		return intPostOffSetX;
 	}
 	/*
-	 * Para que el objeto esté centrado habrá que ponerle -50% (porque se empieza a pintar desde el 0,0)
+	 * Para que el objeto estÃ¡ centrado habrÃ¡ que ponerle -50% (porque se empieza a pintar desde el 0,0)
 	 */
 	public void setIntPostOffSetX(int intPostOffSetX) {
 		this.intPostOffSetX = intPostOffSetX;
@@ -221,7 +223,7 @@ public abstract class GameObject {
 			}
 		}
 	}
-	public static GameObject build(Object menuOrScreen, Game game, Node node) {
+	public static GameObject build(Object clase, Object menuOrScreen, Game game, Node node) {
 		Menu menu = null;
 		Screen screen = null;
 		if (menuOrScreen instanceof Menu) {
@@ -234,22 +236,25 @@ public abstract class GameObject {
 			InteligentDimension dimension = InteligentDimension.build(DOMUtils.getChild(node, "dimension"));
 			if (position != null && dimension != null) {
 				try {
+					Node idNode = DOMUtils.getChild(node, "id");
+					String id = idNode != null ? idNode.getTextContent() : "";
 					if (node.getNodeName().equals("TextBox")) {
 						boolean ocult = Boolean.valueOf(DOMUtils.getChild(node, "ocult").getTextContent());
 						String initialText = DOMUtils.getChild(node, "initialText").getTextContent();
 						String placeholder = DOMUtils.getChild(node, "placeholder").getTextContent();
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onFocusMethod = DOMUtils.getChild(methodsNode, "onFocus").getTextContent();
-						TextBox textBox = new TextBox(initialText, position, game, dimension, ocult) {
+						TextBox textBox = new TextBox(id, initialText, position, game, dimension, ocult) {
 							@Override
 							public void onFocus() {
 								if (!onFocusMethod.isEmpty()) {
 									//execMethod(menuOrScreen, onFocusMethod, new Class<?>[] {int.class}, new Object[] {1});
-									execMethod(menuOrScreen, onFocusMethod);
+									execMethod(clase, onFocusMethod);
 								}
 							}
 						};
 						textBox.setPlaceholder(placeholder);
+						System.out.println(textBox.getID());
 						if (menu != null) {
 							menu.addGameObject(textBox);
 						} else if (screen != null) {
@@ -260,14 +265,14 @@ public abstract class GameObject {
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
 						String onSelectMethod = DOMUtils.getChild(methodsNode, "onSelect").getTextContent();
-						SelectBox selectBox = new SelectBox(position, game, dimension) {
+						SelectBox selectBox = new SelectBox(id, position, game, dimension) {
 							@Override
 							public void onSelect(boolean selected) {
-								execMethod(menuOrScreen, onSelectMethod, new Class<?>[] {boolean.class}, new Object[] {selected});
+								execMethod(clase, onSelectMethod, new Class<?>[] {boolean.class}, new Object[] {selected});
 							}
 							@Override
 							public void onOver() {
-								execMethod(menuOrScreen, onOverMethod);
+								execMethod(clase, onOverMethod);
 							}							
 						};
 						selectBox.setSelected(selected);
@@ -285,10 +290,10 @@ public abstract class GameObject {
 						Color completeColor = DOMUtils.getColor(DOMUtils.getChild(node, "completeColor"));
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
-						LoadingBar lb = new LoadingBar(porcent, showPorcent, position, game, dimension) {
+						LoadingBar lb = new LoadingBar(id, porcent, showPorcent, position, game, dimension) {
 							@Override
 							public void onOver() {
-								execMethod(menuOrScreen, onOverMethod);
+								execMethod(clase, onOverMethod);
 							}
 						};
 						lb.setTextExtra(textExtra);
@@ -307,14 +312,14 @@ public abstract class GameObject {
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
 						String onClickMethod = DOMUtils.getChild(methodsNode, "onClick").getTextContent();
-						TextButton tb = new TextButton(text, position, game, dimension) {
+						TextButton tb = new TextButton(id, text, position, game, dimension) {
 							@Override
 							public void onClick() {
-								execMethod(menuOrScreen, onClickMethod);
+								execMethod(clase, onClickMethod);
 							}
 							@Override
 							public void onOver() {
-								execMethod(menuOrScreen, onOverMethod);
+								execMethod(clase, onOverMethod);
 							}							
 						};
 						tb.setLetterColor(letterColor);
@@ -333,14 +338,14 @@ public abstract class GameObject {
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
 						String onClickMethod = DOMUtils.getChild(methodsNode, "onClick").getTextContent();
-						TextButtonStyle1 tb = new TextButtonStyle1(text, position, game, dimension) {
+						TextButtonStyle1 tb = new TextButtonStyle1(id, text, position, game, dimension) {
 							@Override
 							public void onClick() {
-								execMethod(menuOrScreen, onClickMethod);
+								execMethod(clase, onClickMethod);
 							}
 							@Override
 							public void onOver() {
-								execMethod(menuOrScreen, onOverMethod);
+								execMethod(clase, onOverMethod);
 							}							
 						};
 						tb.setLetterColor(letterColor);
@@ -359,14 +364,14 @@ public abstract class GameObject {
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
 						String onClickMethod = DOMUtils.getChild(methodsNode, "onClick").getTextContent();
-						TextButtonStyle2 tb = new TextButtonStyle2(text, position, game, dimension) {
+						TextButtonStyle2 tb = new TextButtonStyle2(id, text, position, game, dimension) {
 							@Override
 							public void onClick() {
-								execMethod(menuOrScreen, onClickMethod);
+								execMethod(clase, onClickMethod);
 							}
 							@Override
 							public void onOver() {
-								execMethod(menuOrScreen, onOverMethod);
+								execMethod(clase, onOverMethod);
 							}							
 						};
 						tb.setLetterColor(letterColor);
@@ -375,6 +380,31 @@ public abstract class GameObject {
 							menu.addGameObject(tb);
 						} else if (screen != null) {
 							screen.addGameObject(tb);
+						}
+					} else if (node.getNodeName().equals("Menu")) {
+						Node methodsNode = DOMUtils.getChild(node, "methods");
+						String buildMethod = DOMUtils.getChild(methodsNode, "build").getTextContent();
+						String onClickMethod = DOMUtils.getChild(methodsNode, "onClick").getTextContent();
+						Node menuObjectsNode = DOMUtils.getChild(node, "objects");
+						Menu buildMenu = new Menu(id, position, game, dimension) {
+							@Override
+							public void build(Graphics g) {
+								execMethod(clase, buildMethod, new Class<?>[] {Graphics.class}, new Object[] {g});
+							}
+							@Override
+							public void onClick(int x, int y) {
+								execMethod(clase, onClickMethod, new Class<?>[] {int.class, int.class}, new Object[] {x, y});
+							}
+						};
+						System.out.println(menuObjectsNode == null);
+						System.out.println("Cargando " + DOMUtils.getChildrens(menuObjectsNode).size() + " objetos dentro del menu...");
+						for (Node menuObject : DOMUtils.getChildrens(menuObjectsNode)) {
+							build(clase, buildMenu, game, menuObject);
+						}
+						if (menu != null) {
+							menu.addGameObject(buildMenu);
+						} else if (screen != null) {
+							screen.addGameObject(buildMenu);
 						}
 					} else {
 						System.err.println("Error al coger el tipo de elemento...");
@@ -385,7 +415,7 @@ public abstract class GameObject {
 					System.err.println(DOMUtils.getXML(node));
 				}
 			} else {
-				System.err.println("Error al coger la posición o dimensión del objeto...");
+				System.err.println("Error al coger la posiciÃ³n o dimensiÃ³n del objeto...");
 				System.err.println(DOMUtils.getXML(node));
 			}
 		} else {
@@ -393,27 +423,26 @@ public abstract class GameObject {
 		}
 		return null;
 	}
-	private static void execMethod(Object menuOrScreen, String methodName) {
-		execMethod(menuOrScreen, methodName, new Class<?>[0], new Object[0]);
+	private static void execMethod(Object clase, String methodName) {
+		execMethod(clase, methodName, new Class<?>[0], new Object[0]);
 	}
-	private static void execMethod(Object menuOrScreen, String methodName, Class<?>[] vars, Object[] args) {
+	private static void execMethod(Object clase, String methodName, Class<?>[] vars, Object[] args) {
 		try {
 			try {
-				menuOrScreen.getClass().getDeclaredMethod(methodName, vars).invoke(menuOrScreen, args);
+				clase.getClass().getDeclaredMethod(methodName, vars).invoke(clase, args);
 			} catch (IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		} catch (NoSuchMethodException e) {
-			System.err.println("No se encontró el método " + methodName + " en la clase " + menuOrScreen.getClass().getSimpleName());
+			System.err.println("No se encontrÃ³ el mÃ©todo " + methodName + " en la clase " + clase.getClass().getSimpleName());
 			System.err.print("Compruebe que el siguiente codigo: 'public void " + methodName + "(");
 			for (int i = 0; i < vars.length; i++) {
-				Class<?> clase = vars[i];
-				System.err.print((i != 0 ? ", " : "") + clase.getSimpleName() + " var" + i);
+				System.err.print((i != 0 ? ", " : "") + vars[i].getSimpleName() + " var" + i);
 			}
-			System.err.println(")) {...}'");
+			System.err.println(") {/*...*/}'");
 			e.printStackTrace();
 		} catch (SecurityException | IllegalAccessException e) {
-			System.err.println("El método " + methodName + " en la clase " + menuOrScreen.getClass().getSimpleName() + " probablemente sea privado, coloquelo como público.");
+			System.err.println("El mÃ©todo " + methodName + " en la clase " + clase.getClass().getSimpleName() + " probablemente sea privado, coloquelo como pÃºblico.");
 			e.printStackTrace();
 		}
 	}

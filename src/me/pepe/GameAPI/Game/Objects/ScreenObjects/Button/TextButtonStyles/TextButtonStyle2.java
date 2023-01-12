@@ -19,6 +19,9 @@ public abstract class TextButtonStyle2 extends TextButton {
 	private long transTime = 0;
 	private long lastRender = 0;
 	public TextButtonStyle2(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
+		this("", text, intPos, game, intDim);
+	}
+	public TextButtonStyle2(String id, String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
 		super(text, intPos, game, intDim);
 		setBoxColor(Color.CYAN);
 		setLetterColor(Color.WHITE);
