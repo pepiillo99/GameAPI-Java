@@ -22,11 +22,11 @@ public abstract class GameAudio extends Thread {
 			clip.start();
 			onStart();
 			sleep(100);
-			System.out.println("audio started " + clip.isRunning() + " " + fileName);
+			//System.out.println("audio started " + clip.isRunning() + " " + fileName);
 			while (clip.isRunning()) {
 				sleep(1);
 			}
-			System.out.println("audio finished " + fileName);
+			//System.out.println("audio finished " + fileName);
 			onFinish();
 			if (bucle) {
 				run();

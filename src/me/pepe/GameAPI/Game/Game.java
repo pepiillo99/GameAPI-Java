@@ -26,14 +26,21 @@ public class Game extends Canvas implements Runnable {
 		screenManager = new ScreenManager(this);
 		windows = new Windows(windowsName, wx, wy, icon, this);
 	}
-	long start = 0;
+	private long start = 0;
 	public void start() {
 		windows.setVisible();
+		requestFocus();
 		start = System.currentTimeMillis();
 		//System.out.println(System.currentTimeMillis() - start + "ms en ver la ventanaaaa");
 		createBufferStrategy(3);
 		//System.out.println(System.currentTimeMillis() - start + "ms en crear el buffer");
 		thread = new Thread(this);
+		if (getScreen() != null) {
+			getScreen().onOpen();
+			for (GameObject object : getScreen().getGameObjects()) {
+				object.onScreen();
+			}	
+		}	
 		thread.start();
 		running = true;
 	}
@@ -118,9 +125,11 @@ public class Game extends Canvas implements Runnable {
 				}
 			}
 			this.screen = screen;
-			getScreen().onOpen();
-			for (GameObject object : getScreen().getGameObjects()) {
-				object.onScreen();
+			if (running) {
+				getScreen().onOpen();
+				for (GameObject object : getScreen().getGameObjects()) {
+					object.onScreen();
+				}
 			}
 			this.addMouseListener(getScreen().getMouseInput());
 			this.addMouseMotionListener(getScreen().getMouseInput());

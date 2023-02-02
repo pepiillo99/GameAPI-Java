@@ -40,7 +40,7 @@ public class ExtendInteligentDimension extends InteligentDimension {
 	@Override
 	public int calcWeidht() {
 		if (extendiblePosibility.equals(InteligentExtendiblePosibility.BOTH) || extendiblePosibility.equals(InteligentExtendiblePosibility.WEIDHT)) {
-			return (int) ((getMaxWeidht() - object.getX()) + 1) - offW;
+			return (int) ((getMaxWeidht() - (object != null ? object.getX() : 0)) + 1) - offW;
 		} else if (extendiblePosibility.equals(InteligentExtendiblePosibility.HEIGHT)) {
 			if (auxDim != null) {
 				return auxDim.calcWeidht();
@@ -51,7 +51,7 @@ public class ExtendInteligentDimension extends InteligentDimension {
 	@Override
 	public int calcHeight() {
 		if (extendiblePosibility.equals(InteligentExtendiblePosibility.BOTH) || extendiblePosibility.equals(InteligentExtendiblePosibility.HEIGHT)) {
-			return (int) ((getMaxHeight() - object.getY()) + 1) - offH;
+			return (int) ((getMaxHeight() - (object != null ? object.getY() : 0)) + 1) - offH;
 		} else if (extendiblePosibility.equals(InteligentExtendiblePosibility.WEIDHT)) {
 			if (auxDim != null) {
 				return auxDim.calcHeight();

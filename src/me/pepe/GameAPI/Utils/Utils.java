@@ -88,4 +88,7 @@ public class Utils {
 		}
 		return buf;
 	}
+	public static double randomDouble(double min, double max) {
+		return min + (random.nextDouble() * (max - min));
+	}
 }

@@ -2,13 +2,17 @@ package me.pepe.GameAPI.Game.Objects;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Node;
 
 import me.pepe.GameAPI.Game.Game;
+import me.pepe.GameAPI.Game.Objects.ScreenObjects.Label;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.LoadingBar;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Menu;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.SelectBox;
@@ -19,6 +23,8 @@ import me.pepe.GameAPI.Game.Objects.ScreenObjects.Button.TextButtonStyles.TextBu
 import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.Utils.DOMUtils;
 import me.pepe.GameAPI.Utils.GameLocation;
+import me.pepe.GameAPI.Utils.LabelAligment;
+import me.pepe.GameAPI.Utils.LabelPart;
 import me.pepe.GameAPI.Utils.ObjectDimension;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
 import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension;
@@ -81,10 +87,10 @@ public abstract class GameObject {
 	public double getY() {
 		return y;
 	}
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 	public double getVelX() {
@@ -156,8 +162,8 @@ public abstract class GameObject {
 				x += velX;
 				y += velY;
 				if (!windowsPassable) {
-					x = clamp((int) x, 0, game.getWindows().getXToPaint() - (int) dimension.getX());
-					y = clamp((int) y, 0, game.getWindows().getYToPaint() - (int) dimension.getY());
+					x = clamp(x, 0, game.getWindows().getXToPaint() - dimension.getX());
+					y = clamp(y, 0, game.getWindows().getYToPaint() - dimension.getY());
 				}
 				hitBox.setBounds((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
 			}
@@ -177,7 +183,7 @@ public abstract class GameObject {
 	public abstract void render(Graphics g);
 	public void onScreen() {}
 	public void onQuitScreen() {}
-	private int clamp(int var, int min, int max) {
+	private double clamp(double var, double min, double max) {
 		if (var >= max) {
 			return var = max;
 		} else if (var <= min) {
@@ -236,6 +242,7 @@ public abstract class GameObject {
 		if (menu != null || screen != null) {
 			InteligentPosition position = InteligentPosition.build(menuOrScreen, DOMUtils.getChild(node, "position"));
 			InteligentDimension dimension = InteligentDimension.build(DOMUtils.getChild(node, "dimension"));
+			GameObject gameObject = null;
 			if (position != null && dimension != null) {
 				try {
 					Node idNode = DOMUtils.getChild(node, "id");
@@ -246,7 +253,7 @@ public abstract class GameObject {
 						String placeholder = DOMUtils.getChild(node, "placeholder").getTextContent();
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onFocusMethod = DOMUtils.getChild(methodsNode, "onFocus").getTextContent();
-						TextBox textBox = new TextBox(id, initialText, position, game, dimension, ocult) {
+						gameObject= new TextBox(id, initialText, position, game, dimension, ocult) {
 							@Override
 							public void onFocus() {
 								if (!onFocusMethod.isEmpty()) {
@@ -255,19 +262,38 @@ public abstract class GameObject {
 								}
 							}
 						};
-						textBox.setPlaceholder(placeholder);
-						System.out.println(textBox.getID());
-						if (menu != null) {
-							menu.addGameObject(textBox);
-						} else if (screen != null) {
-							screen.addGameObject(textBox);
+						((TextBox) gameObject).setPlaceholder(placeholder);
+					} else if (node.getNodeName().equals("Label")) {
+						String text = "";
+						Node textNode = DOMUtils.getChild(node, "text");
+						if (textNode != null) {
+							text = textNode.getTextContent();
 						}
+						List<LabelPart> parts = new ArrayList<LabelPart>();
+						Node partsNode = DOMUtils.getChild(node, "parts");
+						if (partsNode != null) {
+							for (Node partNode : DOMUtils.getChildrens(partsNode)) {
+								String partText = DOMUtils.getChild(partNode, "text").getTextContent();
+								Color partColor = DOMUtils.getColor(DOMUtils.getChild(partNode, "color"));
+								Font partFont = DOMUtils.getFont(DOMUtils.getChild(partNode, "font"));
+								LabelPart labelPart = new LabelPart(partText, partColor, partFont);
+								parts.add(labelPart);
+							}
+						}
+						Color color = DOMUtils.getColor(DOMUtils.getChild(node, "color"));
+						Font font = DOMUtils.getFont(DOMUtils.getChild(node, "font"));
+						LabelAligment aligment = LabelAligment.valueOf(DOMUtils.getChild(node, "aligment").getTextContent());
+						gameObject = new Label(text, color, font, id, position, game, dimension);
+						if (!parts.isEmpty()) {
+							((Label) gameObject).setLabelParts(parts);
+						}
+						((Label) gameObject).setAligment(aligment);
 					} else if (node.getNodeName().equals("SelectBox")) {
 						boolean selected = Boolean.valueOf(DOMUtils.getChild(node, "selected").getTextContent());
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
 						String onSelectMethod = DOMUtils.getChild(methodsNode, "onSelect").getTextContent();
-						SelectBox selectBox = new SelectBox(id, position, game, dimension) {
+						gameObject = new SelectBox(id, position, game, dimension) {
 							@Override
 							public void onSelect(boolean selected) {
 								execMethod(clase, onSelectMethod, new Class<?>[] {boolean.class}, new Object[] {selected});
@@ -277,12 +303,7 @@ public abstract class GameObject {
 								execMethod(clase, onOverMethod);
 							}							
 						};
-						selectBox.setSelected(selected);
-						if (menu != null) {
-							menu.addGameObject(selectBox);
-						} else if (screen != null) {
-							screen.addGameObject(selectBox);
-						}
+						((SelectBox) gameObject).setSelected(selected);
 					} else if (node.getNodeName().equals("LoadingBar")) {
 						boolean showPorcent = Boolean.valueOf(DOMUtils.getChild(node, "showPorcent").getTextContent());
 						String textExtra = DOMUtils.getChild(node, "extraText").getTextContent();
@@ -292,21 +313,16 @@ public abstract class GameObject {
 						Color completeColor = DOMUtils.getColor(DOMUtils.getChild(node, "completeColor"));
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
-						LoadingBar lb = new LoadingBar(id, porcent, showPorcent, position, game, dimension) {
+						gameObject = new LoadingBar(id, porcent, showPorcent, position, game, dimension) {
 							@Override
 							public void onOver() {
 								execMethod(clase, onOverMethod);
 							}
 						};
-						lb.setTextExtra(textExtra);
-						lb.setPorcentColor(porcentColor);
-						lb.setBackgroundColor(backgroundColor);
-						lb.setCompleteColor(completeColor);
-						if (menu != null) {
-							menu.addGameObject(lb);
-						} else if (screen != null) {
-							screen.addGameObject(lb);
-						}
+						((LoadingBar) gameObject).setTextExtra(textExtra);
+						((LoadingBar) gameObject).setPorcentColor(porcentColor);
+						((LoadingBar) gameObject).setBackgroundColor(backgroundColor);
+						((LoadingBar) gameObject).setCompleteColor(completeColor);
 					} else if (node.getNodeName().equals("TextButton")) {
 						String text = DOMUtils.getChild(node, "text").getTextContent();
 						Color letterColor = DOMUtils.getColor(DOMUtils.getChild(node, "letterColor"));
@@ -314,7 +330,7 @@ public abstract class GameObject {
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
 						String onClickMethod = DOMUtils.getChild(methodsNode, "onClick").getTextContent();
-						TextButton tb = new TextButton(id, text, position, game, dimension) {
+						gameObject = new TextButton(id, text, position, game, dimension) {
 							@Override
 							public void onClick() {
 								execMethod(clase, onClickMethod);
@@ -324,13 +340,8 @@ public abstract class GameObject {
 								execMethod(clase, onOverMethod);
 							}							
 						};
-						tb.setLetterColor(letterColor);
-						tb.setBoxColor(boxColor);
-						if (menu != null) {
-							menu.addGameObject(tb);
-						} else if (screen != null) {
-							screen.addGameObject(tb);
-						}
+						((TextButton) gameObject).setLetterColor(letterColor);
+						((TextButton) gameObject).setBoxColor(boxColor);
 					} else if (node.getNodeName().equals("TextButtonStyle1")) {
 						String text = DOMUtils.getChild(node, "text").getTextContent();
 						Color letterColor = DOMUtils.getColor(DOMUtils.getChild(node, "letterColor"));
@@ -340,7 +351,7 @@ public abstract class GameObject {
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
 						String onClickMethod = DOMUtils.getChild(methodsNode, "onClick").getTextContent();
-						TextButtonStyle1 tb = new TextButtonStyle1(id, text, position, game, dimension) {
+						gameObject = new TextButtonStyle1(id, text, position, game, dimension) {
 							@Override
 							public void onClick() {
 								execMethod(clase, onClickMethod);
@@ -350,15 +361,10 @@ public abstract class GameObject {
 								execMethod(clase, onOverMethod);
 							}							
 						};
-						tb.setLetterColor(letterColor);
-						tb.setBoxColor(boxColor);
-						tb.setToBoxColor(toBoxColor);
-						tb.setToLetterColor(toLetterColor);
-						if (menu != null) {
-							menu.addGameObject(tb);
-						} else if (screen != null) {
-							screen.addGameObject(tb);
-						}
+						((TextButton) gameObject).setLetterColor(letterColor);
+						((TextButton) gameObject).setBoxColor(boxColor);
+						((TextButtonStyle1) gameObject).setToBoxColor(toBoxColor);
+						((TextButtonStyle1) gameObject).setToLetterColor(toLetterColor);
 					} else if (node.getNodeName().equals("TextButtonStyle2")) {
 						String text = DOMUtils.getChild(node, "text").getTextContent();
 						Color letterColor = DOMUtils.getColor(DOMUtils.getChild(node, "letterColor"));
@@ -366,7 +372,7 @@ public abstract class GameObject {
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String onOverMethod = DOMUtils.getChild(methodsNode, "onOver").getTextContent();
 						String onClickMethod = DOMUtils.getChild(methodsNode, "onClick").getTextContent();
-						TextButtonStyle2 tb = new TextButtonStyle2(id, text, position, game, dimension) {
+						gameObject = new TextButtonStyle2(id, text, position, game, dimension) {
 							@Override
 							public void onClick() {
 								execMethod(clase, onClickMethod);
@@ -376,19 +382,14 @@ public abstract class GameObject {
 								execMethod(clase, onOverMethod);
 							}							
 						};
-						tb.setLetterColor(letterColor);
-						tb.setBoxColor(boxColor);
-						if (menu != null) {
-							menu.addGameObject(tb);
-						} else if (screen != null) {
-							screen.addGameObject(tb);
-						}
+						((TextButton) gameObject).setLetterColor(letterColor);
+						((TextButton) gameObject).setBoxColor(boxColor);
 					} else if (node.getNodeName().equals("Menu")) {
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String buildMethod = DOMUtils.getChild(methodsNode, "build").getTextContent();
 						String onClickMethod = DOMUtils.getChild(methodsNode, "onClick").getTextContent();
 						Node menuObjectsNode = DOMUtils.getChild(node, "objects");
-						Menu buildMenu = new Menu(id, position, game, dimension) {
+						gameObject = new Menu(id, position, game, dimension) {
 							@Override
 							public void build(Graphics g) {
 								execMethod(clase, buildMethod, new Class<?>[] {Graphics.class}, new Object[] {g});
@@ -401,16 +402,24 @@ public abstract class GameObject {
 						System.out.println(menuObjectsNode == null);
 						System.out.println("Cargando " + DOMUtils.getChildrens(menuObjectsNode).size() + " objetos dentro del menu...");
 						for (Node menuObject : DOMUtils.getChildrens(menuObjectsNode)) {
-							build(clase, buildMenu, game, menuObject);
-						}
-						if (menu != null) {
-							menu.addGameObject(buildMenu);
-						} else if (screen != null) {
-							screen.addGameObject(buildMenu);
+							build(clase, gameObject, game, menuObject);
 						}
 					} else {
 						System.err.println("Error al coger el tipo de elemento...");
 						System.err.println(DOMUtils.getXML(node));
+					}
+					if (gameObject.getInteligentDimension() instanceof ExtendInteligentDimension) {
+						((ExtendInteligentDimension) gameObject.getInteligentDimension()).setGameObject(gameObject);
+						if (menu != null) {
+							((ExtendInteligentDimension) gameObject.getInteligentDimension()).setMenu(menu);
+						} else if (screen != null) {
+							((ExtendInteligentDimension) gameObject.getInteligentDimension()).setScreen(screen);
+						}
+					}
+					if (menu != null) {
+						menu.addGameObject(gameObject);
+					} else if (screen != null) {
+						screen.addGameObject(gameObject);
 					}
 				} catch (NumberFormatException ex) {
 					System.err.println("Error al montar el objeto...");

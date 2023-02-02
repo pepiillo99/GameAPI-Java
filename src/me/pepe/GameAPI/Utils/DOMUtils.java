@@ -1,6 +1,7 @@
 package me.pepe.GameAPI.Utils;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -55,6 +56,10 @@ public class DOMUtils {
 	}
 	public static Color getColor(Node node) {
 		return new Color(Integer.valueOf(getChild(node, "r").getTextContent()), Integer.valueOf(getChild(node, "g").getTextContent()), Integer.valueOf(getChild(node, "b").getTextContent()), Integer.valueOf(getChild(node, "a").getTextContent()));
+	}
+	public static Font getFont(Node node) {
+		// plain: 0, bold: 1, italic: 2
+		return new Font(getChild(node, "name").getTextContent(), Integer.valueOf(getChild(node, "font").getTextContent()), Integer.valueOf(getChild(node, "size").getTextContent()));
 	}
 	// coge los nombres de los atributos de un nodo
 	public static String[] getAttributes(Node node) {
