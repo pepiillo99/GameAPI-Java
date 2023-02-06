@@ -2,7 +2,6 @@ package me.pepe.GameAPI.Windows;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Menu;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;

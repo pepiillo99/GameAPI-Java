@@ -113,7 +113,9 @@ public abstract class Screen {
 		g.setColor(getFPSTPSColor(getGame().getTPS(), getGame().getFPS()));
 		g.setFont(new Font("Aria", Font.PLAIN, 10));
 		// https://stackoverflow.com/questions/5652344/how-can-i-use-a-custom-font-in-java
-		g.drawString("FPS: " + getGame().getFPS() + " TPS: " + getGame().getTPS(), 0, 10);
+		if (game.isShowInfo()) {
+			g.drawString("FPS: " + getGame().getFPS() + " TPS: " + getGame().getTPS(), 0, 10);
+		}
 	}
 	public void tick() {
 		if (getMouseInput() != null) {
@@ -269,6 +271,7 @@ public abstract class Screen {
 		loadFromXML(file);
 	}
 	public void loadFromXML(File file) {
+		long startLoad = System.currentTimeMillis();
 		System.out.println("Screen loaded from file " + file.getAbsolutePath());
 		Document doc = DOMUtils.abrirDOM(file);
 		Node node = doc.getFirstChild();
@@ -276,6 +279,7 @@ public abstract class Screen {
 			GameObject.build(this, this, getGame(), object);
 		}
 		onLoadXML();
+		System.out.println("Screen loaded in " + (System.currentTimeMillis() - startLoad) + "ms");
 	}
 	public void onLoadXML() {
 		

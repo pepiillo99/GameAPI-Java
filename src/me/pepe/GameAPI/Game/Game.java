@@ -20,6 +20,7 @@ public class Game extends Canvas implements Runnable {
 	private int objectID = 0;
 	private int tps = 1;
 	private int fps = 1;
+	private boolean showInfo = true;
 	private int maxTPS = 20;
 	private int maxFPS = 144;
 	public Game(String windowsName, int wx, int wy, Image icon) {
@@ -208,6 +209,12 @@ public class Game extends Canvas implements Runnable {
 			}
 		}
 		stop();
+	}
+	public boolean isShowInfo() {
+		return showInfo;
+	}
+	public void setShowInfo(boolean showInfo) {
+		this.showInfo = showInfo;
 	}
 	public int getNextObjectID() {
 		return objectID++;

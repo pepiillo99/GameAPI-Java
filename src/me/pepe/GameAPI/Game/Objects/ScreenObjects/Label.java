@@ -19,6 +19,9 @@ public class Label extends GameObject {
 	private Font font;
 	private LabelAligment aligment = LabelAligment.LEFT;
 	private List<LabelPart> parts = new ArrayList<LabelPart>();
+	private Color background;
+	private boolean underlined = false;
+	private Color underlineColor = Color.BLACK;
 	public Label(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
 		this(text, Color.BLACK, new Font("Aria", Font.BOLD, 10), null, intPos, game, intDim);
 	}
@@ -37,15 +40,32 @@ public class Label extends GameObject {
 	@Override
 	public void render(Graphics g) {
 		if (hasInteligence()) {
+			int calcY = (int) (getY() + g.getFontMetrics().getHeight());
+			//int calcY = (int) (getY() + getDimension().getY()); // down
+			//int calcY = (int) (getY() + ((getDimension().getY()/2) + (g.getFontMetrics().getHeight()/2))); // center
 			if (parts.isEmpty()) {
 				g.setColor(color);
 				g.setFont(font);
-				if (aligment.equals(LabelAligment.LEFT)) {
+ 				if (aligment.equals(LabelAligment.LEFT)) {
 					g.drawString(text, (int) getX(), (int) getY());
+					if (underlined) {
+						g.setColor(underlineColor);
+						g.drawLine((int) getX(), (int) getY(), (int) getX() + g.getFontMetrics().stringWidth(text), calcY);
+					}
 				} else if (aligment.equals(LabelAligment.RIGHT)) {
-					g.drawString(text, (int) (getX() + (getDimension().getX() - g.getFontMetrics().stringWidth(text))), (int) getY());
+					int calcX = (int) (getX() + (getDimension().getX() - g.getFontMetrics().stringWidth(text)));
+					g.drawString(text, calcX, calcY);
+					if (underlined) {
+						g.setColor(underlineColor);
+						g.drawLine(calcX, calcY, calcX + g.getFontMetrics().stringWidth(text), calcY);
+					}
 				} else if (aligment.equals(LabelAligment.CENTER)) {
-					g.drawString(text, (int) (getX() + ((getDimension().getX()/2) - (g.getFontMetrics().stringWidth(text) / 2))), (int) getY());
+					int calcX = (int) (getX() + ((getDimension().getX()/2) - (g.getFontMetrics().stringWidth(text) / 2)));
+					g.drawString(text, calcX, calcY);
+					if (underlined) {
+						g.setColor(underlineColor);
+						g.drawLine(calcX, calcY, calcX + g.getFontMetrics().stringWidth(text), calcY);
+					}
 				}
 			} else {
 				int xPos = 0;
@@ -56,13 +76,13 @@ public class Label extends GameObject {
 						g.setColor(lp.getColor());
 						g.setFont(lp.getFont());
 						xPos -= g.getFontMetrics().stringWidth(lp.getText());
-						g.drawString(lp.getText(), (int) getX() + xPos, (int) getY());
+						g.drawString(lp.getText(), (int) getX() + xPos, calcY);
 					}
 				} else if (aligment.equals(LabelAligment.LEFT)) {
 					for (LabelPart lp : parts) {
 						g.setColor(lp.getColor());
 						g.setFont(lp.getFont());
-						g.drawString(lp.getText(), (int) getX() + xPos, (int) getY());
+						g.drawString(lp.getText(), (int) getX() + xPos, calcY);
 						xPos += g.getFontMetrics().stringWidth(lp.getText());
 					}
 				} else if (aligment.equals(LabelAligment.CENTER)) {
@@ -73,7 +93,7 @@ public class Label extends GameObject {
 					for (LabelPart lp : parts) {
 						g.setColor(lp.getColor());
 						g.setFont(lp.getFont());
-						g.drawString(lp.getText(), (int) (getX() + xPos + (getDimension().getX()/2) - (xTotal/2)), (int) getY());
+						g.drawString(lp.getText(), (int) (getX() + xPos + (getDimension().getX()/2) - (xTotal/2)), calcY);
 						xPos += g.getFontMetrics().stringWidth(lp.getText());
 					}
 				}

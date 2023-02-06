@@ -13,6 +13,8 @@ import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension.Inte
       </PixelInteligentDimension>
       <ExtendInteligentDimension> <!-- necesitar� el screen -->
       	<extendiblePosibility>WEIDHT</extendiblePosibility>
+      	<offWeidht>0</offWeidht>
+      	<offHeight>0</offHeight>
       	<axuDim>
       	  <PixelInteligentDimension>
         	<weidht>0</weidht>
@@ -39,9 +41,19 @@ public abstract class InteligentDimension {
 			Node inteligentResizeNode = DOMUtils.getChild(node, "ExtendInteligentDimension");
 			try {
 				InteligentExtendiblePosibility extendiblePosibility = InteligentExtendiblePosibility.valueOf(DOMUtils.getChild(inteligentResizeNode, "extendiblePosibility").getTextContent());
+				int offWeidht = 0;
+				int offHeight = 0;
+				Node offWNode = DOMUtils.getChild(inteligentResizeNode, "offWeidht");
+				Node offHNode = DOMUtils.getChild(inteligentResizeNode, "offHeight");
+				if (offWNode != null) {
+					offWeidht = Integer.valueOf(offWNode.getTextContent());
+				}
+				if (offHNode != null) {
+					offHeight = Integer.valueOf(offHNode.getTextContent());
+				}
 				Node auxDim = DOMUtils.getChild(inteligentResizeNode, "auxDim");
 				if (auxDim != null) {
-					return new ExtendInteligentDimension(extendiblePosibility, build(auxDim)); // they add object and screen/menu on add in screen/menu
+					return new ExtendInteligentDimension(extendiblePosibility, build(auxDim), offWeidht, offHeight); // they add object and screen/menu on add in screen/menu
 				} else {
 					throw new NullPointerException("No se pudo recoger el 'auxDim'\n" + DOMUtils.getXML(inteligentResizeNode));
 				}
