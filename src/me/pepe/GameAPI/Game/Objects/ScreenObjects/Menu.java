@@ -23,6 +23,9 @@ import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
 
 public abstract class Menu extends GameObject {
+	/*
+	 * El menu deberá de bajar automaticamente si un objeto de su interior sale de las dimensiones del menu o si sale de la pantalla
+	 */
 	private boolean show = true;
 	private boolean over = false;
 	private HashMap<String, GameObject> objects = new HashMap<String, GameObject>();

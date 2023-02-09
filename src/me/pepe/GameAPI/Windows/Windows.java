@@ -35,7 +35,7 @@ public class Windows {
 		}
 		System.out.println("Ha tardadp " + (System.currentTimeMillis() - start) + "ms en ejecutar la ventana");
 		frame.add(game);
-		System.out.println("Ha tardadp " + (System.currentTimeMillis() - start) + "ms en añadir el canvas la ventana");
+		System.out.println("Ha tardadp " + (System.currentTimeMillis() - start) + "ms en aï¿½adir el canvas la ventana");
 	}
 	public String getTitle() {
 		return title;
@@ -47,10 +47,10 @@ public class Windows {
 		return frame.getHeight();
 	}
 	public int getXToPaint() {
-		return getX() - (isFullScreen() ? 0 :  16);
+		return game.getWidth();
 	}
 	public int getYToPaint() {
-		return getY() - (isFullScreen() ? 0 :  39);
+		return game.getHeight();
 	}
 	public Dimension getSize() {
 		return frame.getSize();

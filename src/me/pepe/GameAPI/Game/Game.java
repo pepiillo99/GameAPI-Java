@@ -20,20 +20,28 @@ public class Game extends Canvas implements Runnable {
 	private int objectID = 0;
 	private int tps = 1;
 	private int fps = 1;
+	private boolean showInfo = true;
 	private int maxTPS = 20;
 	private int maxFPS = 144;
 	public Game(String windowsName, int wx, int wy, Image icon) {
 		screenManager = new ScreenManager(this);
 		windows = new Windows(windowsName, wx, wy, icon, this);
 	}
-	long start = 0;
+	private long start = 0;
 	public void start() {
 		windows.setVisible();
+		requestFocus();
 		start = System.currentTimeMillis();
 		//System.out.println(System.currentTimeMillis() - start + "ms en ver la ventanaaaa");
 		createBufferStrategy(3);
 		//System.out.println(System.currentTimeMillis() - start + "ms en crear el buffer");
 		thread = new Thread(this);
+		if (getScreen() != null) {
+			getScreen().onOpen();
+			for (GameObject object : getScreen().getGameObjects()) {
+				object.onScreen();
+			}	
+		}	
 		thread.start();
 		running = true;
 	}
@@ -118,9 +126,11 @@ public class Game extends Canvas implements Runnable {
 				}
 			}
 			this.screen = screen;
-			getScreen().onOpen();
-			for (GameObject object : getScreen().getGameObjects()) {
-				object.onScreen();
+			if (running) {
+				getScreen().onOpen();
+				for (GameObject object : getScreen().getGameObjects()) {
+					object.onScreen();
+				}
 			}
 			this.addMouseListener(getScreen().getMouseInput());
 			this.addMouseMotionListener(getScreen().getMouseInput());
@@ -199,6 +209,12 @@ public class Game extends Canvas implements Runnable {
 			}
 		}
 		stop();
+	}
+	public boolean isShowInfo() {
+		return showInfo;
+	}
+	public void setShowInfo(boolean showInfo) {
+		this.showInfo = showInfo;
 	}
 	public int getNextObjectID() {
 		return objectID++;

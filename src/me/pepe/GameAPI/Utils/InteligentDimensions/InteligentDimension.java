@@ -11,8 +11,10 @@ import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension.Inte
         <weidht>0</weidht>
         <height>0</height>
       </PixelInteligentDimension>
-      <ExtendInteligentDimension> <!-- necesitará el screen -->
+      <ExtendInteligentDimension> <!-- necesitarï¿½ el screen -->
       	<extendiblePosibility>WEIDHT</extendiblePosibility>
+      	<offWeidht>0</offWeidht>
+      	<offHeight>0</offHeight>
       	<axuDim>
       	  <PixelInteligentDimension>
         	<weidht>0</weidht>
@@ -33,15 +35,30 @@ public abstract class InteligentDimension {
 				int height = Integer.valueOf(DOMUtils.getChild(inteligentResizeNode, "height").getTextContent());
 				return new PixelInteligentDimension(weidht, height);
 			} catch (Exception ex) {
-				System.err.println(DOMUtils.getXML(node) + " no devolvió los valores esperados...");
+				System.err.println(DOMUtils.getXML(node) + " no devolvÃ³ los valores esperados...");
 			}
 		} else if (DOMUtils.getChild(node, "ExtendInteligentDimension") != null) {
 			Node inteligentResizeNode = DOMUtils.getChild(node, "ExtendInteligentDimension");
 			try {
 				InteligentExtendiblePosibility extendiblePosibility = InteligentExtendiblePosibility.valueOf(DOMUtils.getChild(inteligentResizeNode, "extendiblePosibility").getTextContent());
-				return new ExtendInteligentDimension(extendiblePosibility, build(DOMUtils.getChild(node, "auxDim"))); // they add object and screen/menu on add in screen/menu
+				int offWeidht = 0;
+				int offHeight = 0;
+				Node offWNode = DOMUtils.getChild(inteligentResizeNode, "offWeidht");
+				Node offHNode = DOMUtils.getChild(inteligentResizeNode, "offHeight");
+				if (offWNode != null) {
+					offWeidht = Integer.valueOf(offWNode.getTextContent());
+				}
+				if (offHNode != null) {
+					offHeight = Integer.valueOf(offHNode.getTextContent());
+				}
+				Node auxDim = DOMUtils.getChild(inteligentResizeNode, "auxDim");
+				if (auxDim != null) {
+					return new ExtendInteligentDimension(extendiblePosibility, build(auxDim), offWeidht, offHeight); // they add object and screen/menu on add in screen/menu
+				} else {
+					throw new NullPointerException("No se pudo recoger el 'auxDim'\n" + DOMUtils.getXML(inteligentResizeNode));
+				}
 			} catch (Exception ex) {
-				System.err.println(DOMUtils.getXML(node) + " no devolvió los valores esperados...");
+				System.err.println(DOMUtils.getXML(node) + " no devolviÃ³ los valores esperados...");
 			}
 		}
 		return null;		

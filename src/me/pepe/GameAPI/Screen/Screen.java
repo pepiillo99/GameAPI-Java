@@ -113,7 +113,9 @@ public abstract class Screen {
 		g.setColor(getFPSTPSColor(getGame().getTPS(), getGame().getFPS()));
 		g.setFont(new Font("Aria", Font.PLAIN, 10));
 		// https://stackoverflow.com/questions/5652344/how-can-i-use-a-custom-font-in-java
-		g.drawString("FPS: " + getGame().getFPS() + " TPS: " + getGame().getTPS(), 0, 10);
+		if (game.isShowInfo()) {
+			g.drawString("FPS: " + getGame().getFPS() + " TPS: " + getGame().getTPS(), 0, 10);
+		}
 	}
 	public void tick() {
 		if (getMouseInput() != null) {
@@ -244,7 +246,7 @@ public abstract class Screen {
 		Iterator<GameObject> iterator = getGameObjectClonned().iterator();
 		while (iterator.hasNext()) {
 			GameObject object = iterator.next();
-			if (object.getClass().getSuperclass() == clase) {
+			if (object.getClass().getSuperclass() == clase || object.getClass() == clase) {
 				removeGameObject(object);
 			}
 		}
@@ -266,11 +268,20 @@ public abstract class Screen {
 	}
 	public void loadFromXML(String filePath) {
 		File file = new File(this.getClass().getClassLoader().getResource(filePath).getPath().replace("%c3%b3", "ó").replace("bin", "resources"));
+		loadFromXML(file);
+	}
+	public void loadFromXML(File file) {
+		long startLoad = System.currentTimeMillis();
 		System.out.println("Screen loaded from file " + file.getAbsolutePath());
 		Document doc = DOMUtils.abrirDOM(file);
 		Node node = doc.getFirstChild();
 		for (Node object : DOMUtils.getChildrens(DOMUtils.getChild(node, "objects"))) {
 			GameObject.build(this, this, getGame(), object);
 		}
+		onLoadXML();
+		System.out.println("Screen loaded in " + (System.currentTimeMillis() - startLoad) + "ms");
+	}
+	public void onLoadXML() {
+		
 	}
 }
