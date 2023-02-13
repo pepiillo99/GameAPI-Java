@@ -16,6 +16,7 @@ import me.pepe.GameAPI.Game.Objects.ScreenObjects.Label;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.LoadingBar;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Menu;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.SelectBox;
+import me.pepe.GameAPI.Game.Objects.ScreenObjects.Separator;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.TextBox;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Button.TextButton;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Button.TextButtonStyles.TextButtonStyle1;
@@ -384,6 +385,9 @@ public abstract class GameObject {
 						};
 						((TextButton) gameObject).setLetterColor(letterColor);
 						((TextButton) gameObject).setBoxColor(boxColor);
+					} else if (node.getNodeName().equals("Separator")) {
+						Color color = DOMUtils.getColor(DOMUtils.getChild(node, "color"));
+						gameObject = new Separator(id, color, position, game, dimension);
 					} else if (node.getNodeName().equals("Menu")) {
 						Node methodsNode = DOMUtils.getChild(node, "methods");
 						String buildMethod = DOMUtils.getChild(methodsNode, "build").getTextContent();
