@@ -3,7 +3,6 @@ package me.pepe.GameAPI.Utils.InteligentDimensions;
 import org.w3c.dom.Node;
 
 import me.pepe.GameAPI.Utils.DOMUtils;
-import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension.InteligentExtendiblePosibility;
 
 /*
    </dimensions>
@@ -54,6 +53,29 @@ public abstract class InteligentDimension {
 				Node auxDim = DOMUtils.getChild(inteligentResizeNode, "auxDim");
 				if (auxDim != null) {
 					return new ExtendInteligentDimension(extendiblePosibility, build(auxDim), offWeidht, offHeight); // they add object and screen/menu on add in screen/menu
+				} else {
+					throw new NullPointerException("No se pudo recoger el 'auxDim'\n" + DOMUtils.getXML(inteligentResizeNode));
+				}
+			} catch (Exception ex) {
+				System.err.println(DOMUtils.getXML(node) + " no devolvió los valores esperados...");
+			}
+		} else if (DOMUtils.getChild(node, "ExtendToLimitInteligentDimension") != null) {
+			Node inteligentResizeNode = DOMUtils.getChild(node, "ExtendToLimitInteligentDimension");
+			try {
+				InteligentExtendiblePosibility extendiblePosibility = InteligentExtendiblePosibility.valueOf(DOMUtils.getChild(inteligentResizeNode, "extendiblePosibility").getTextContent());
+				int offWeidht = 0;
+				int offHeight = 0;
+				Node offWNode = DOMUtils.getChild(inteligentResizeNode, "offWeidht");
+				Node offHNode = DOMUtils.getChild(inteligentResizeNode, "offHeight");
+				if (offWNode != null) {
+					offWeidht = Integer.valueOf(offWNode.getTextContent());
+				}
+				if (offHNode != null) {
+					offHeight = Integer.valueOf(offHNode.getTextContent());
+				}
+				Node auxDim = DOMUtils.getChild(inteligentResizeNode, "auxDim");
+				if (auxDim != null) {
+					return new ExtendToLimitInteligentDimension(extendiblePosibility, build(auxDim), offWeidht, offHeight); // they add object and screen/menu on add in screen/menu
 				} else {
 					throw new NullPointerException("No se pudo recoger el 'auxDim'\n" + DOMUtils.getXML(inteligentResizeNode));
 				}

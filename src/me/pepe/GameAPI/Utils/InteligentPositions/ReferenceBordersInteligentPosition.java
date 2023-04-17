@@ -38,6 +38,12 @@ public class ReferenceBordersInteligentPosition extends InteligentPosition {
 	public int getY() {
 		return y;
 	}
+	public VerticalBorders getVerticalBorder() {
+		return vertical;
+	}
+	public HorizontalBorders getHorizontalBorder() {
+		return horizontal;
+	}
 	@Override
 	protected int calcX() {
 		if (hasRenderLimits()) {

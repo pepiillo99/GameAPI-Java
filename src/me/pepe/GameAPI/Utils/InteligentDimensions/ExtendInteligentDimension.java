@@ -108,10 +108,5 @@ public class ExtendInteligentDimension extends InteligentDimension {
 			return (int) menu.getDimension().getY();
 		}
 		return 0;
-	}
-	public enum InteligentExtendiblePosibility {
-		WEIDHT, // x
-		HEIGHT, // y
-		BOTH; // ambos
 	}	
 }
