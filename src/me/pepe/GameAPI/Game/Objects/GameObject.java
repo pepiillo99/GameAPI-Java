@@ -253,7 +253,7 @@ public abstract class GameObject {
 						String initialText = DOMUtils.getChild(node, "initialText").getTextContent();
 						String placeholder = DOMUtils.getChild(node, "placeholder").getTextContent();
 						Node methodsNode = DOMUtils.getChild(node, "methods");
-						String onFocusMethod = DOMUtils.getChild(methodsNode, "onFocus").getTextContent();
+						String onFocusMethod = methodsNode != null ? DOMUtils.getChild(methodsNode, "onFocus").getTextContent() : "";
 						gameObject= new TextBox(id, initialText, position, game, dimension, ocult) {
 							@Override
 							public void onFocus() {
@@ -411,6 +411,11 @@ public abstract class GameObject {
 					} else {
 						System.err.println("Error al coger el tipo de elemento...");
 						System.err.println(DOMUtils.getXML(node));
+					}
+					Node intPostOffSet = DOMUtils.getChild(node, "IntPosOffSet");
+					if (intPostOffSet != null) {
+						gameObject.setIntPostOffSetX(Integer.valueOf(DOMUtils.getChild(intPostOffSet, "x").getTextContent()));
+						gameObject.setIntPostOffSetY(Integer.valueOf(DOMUtils.getChild(intPostOffSet, "y").getTextContent()));
 					}
 					if (gameObject.getInteligentDimension() instanceof ExtendInteligentDimension) {
 						((ExtendInteligentDimension) gameObject.getInteligentDimension()).setGameObject(gameObject);

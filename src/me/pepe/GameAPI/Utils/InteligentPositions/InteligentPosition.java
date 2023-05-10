@@ -19,13 +19,13 @@ import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
     </PixelInteligentPosition>q
   </position>
   <position>
-      <PorcentInteligentPosition> <!-- Será necesario meter o el menu o el windows -->
+      <PorcentInteligentPosition> <!-- Serï¿½ necesario meter o el menu o el windows -->
        <x>0</x>
        <y>0</y>
      </PorcentInteligentPosition>
     </position>
     <position>
-     <ReferenceBordersInteligentPosition> <!-- Será necesario meter o el menu o el windows -->
+     <ReferenceBordersInteligentPosition> <!-- Serï¿½ necesario meter o el menu o el windows -->
        <x>0</x>
        <y>0</y>
        <VerticalBorders>RIGHT</VerticalBorders>
@@ -33,7 +33,7 @@ import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
      </ReferenceBordersInteligentPosition>
     </position>
     <position>
-     <ReferenceObjectInteligentPosition> <!-- Será necesraio meter el objeto-->
+     <ReferenceObjectInteligentPosition> <!-- Serï¿½ necesraio meter el objeto-->
         <objectID>null</objectID>
         <x>0</x>
         <y>0</y>
@@ -83,7 +83,7 @@ public abstract class InteligentPosition {
 						return new PorcentInteligentPosition(menu, x, y);
 					}
 				} catch (Exception ex) {
-					System.err.println(DOMUtils.getXML(node) + " no devolvió los valores esperados...");
+					System.err.println(DOMUtils.getXML(node) + " no devolviï¿½ los valores esperados...");
 				}
 			} else if (DOMUtils.getChild(node, "ReferenceBordersInteligentPosition") != null) {
 				Node inteligentPositionNode = DOMUtils.getChild(node, "ReferenceBordersInteligentPosition");
@@ -98,7 +98,7 @@ public abstract class InteligentPosition {
 						return new ReferenceBordersInteligentPosition(x, y, menu, vertical, horizontal);
 					}
 				} catch (Exception ex) {
-					System.err.println(DOMUtils.getXML(node) + " no devolvió los valores esperados...");
+					System.err.println(DOMUtils.getXML(node) + " no devolviï¿½ los valores esperados...");
 				}
 			} else if (DOMUtils.getChild(node, "ReferenceObjectInteligentPosition") != null) {
 				Node inteligentPositionNode = DOMUtils.getChild(node, "ReferenceObjectInteligentPosition");
@@ -120,7 +120,7 @@ public abstract class InteligentPosition {
 						}
 					}
 				} catch (Exception ex) {
-					System.err.println(DOMUtils.getXML(node) + " no devolvió los valores esperados...");
+					System.err.println(DOMUtils.getXML(node) + " no devolviï¿½ los valores esperados...");
 				}
 			} else if (DOMUtils.getChild(node, "PixelInteligentPosition") != null) {
 				Node inteligentPositionNode = DOMUtils.getChild(node, "PixelInteligentPosition");
@@ -129,7 +129,7 @@ public abstract class InteligentPosition {
 					int y = Integer.valueOf(DOMUtils.getChild(inteligentPositionNode, "y").getTextContent());
 					return new PixelInteligentPosition(x, y);
 				} catch (Exception ex) {
-					System.err.println(DOMUtils.getXML(node) + " no devolvió los valores esperados...");
+					System.err.println(DOMUtils.getXML(node) + " no devolviï¿½ los valores esperados...");
 				}
 			}
 		} else {

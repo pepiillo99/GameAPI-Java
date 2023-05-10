@@ -38,10 +38,10 @@ public class PorcentInteligentPosition extends InteligentPosition {
 	}
 	@Override
 	protected int calcX() {
-		return isWindows() ? (int) (x * windows.getX() / 100) : (int) (x * menu.getX() / 100);
+		return (isWindows() ? (int) (x * windows.getX() / 100) : (int) (x * menu.getDimension().getX() / 100));
 	}
 	@Override
 	protected int calcY() {
-		return isWindows() ? (int) (y * windows.getY() / 100) : (int) (y * menu.getY() / 100);
+		return (isWindows() ? (int) (y * windows.getY() / 100) : (int) (y * menu.getDimension().getY() / 100));
 	}
 }

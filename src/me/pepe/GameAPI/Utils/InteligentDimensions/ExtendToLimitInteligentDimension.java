@@ -117,22 +117,7 @@ public class ExtendToLimitInteligentDimension extends InteligentDimension {
 				}
 			}
 		} else if (menu != null) {
-			for (GameObject object : menu.getGameObjects()) {
-				boolean valid = true;
-				if (object.hasInteligence() && object.getInteligentPosition() instanceof ReferenceBordersInteligentPosition) {
-					ReferenceBordersInteligentPosition inteligentPosition = (ReferenceBordersInteligentPosition) object.getInteligentPosition();
-					if (inteligentPosition.getVerticalBorder() == VerticalBorders.RIGHT) {
-						valid = false;
-					}
-				}
-				if (valid) {
-					int sum = (int) (object.getX() + object.getDimension().getX());
-					if (result < sum) {
-						result = sum;
-					}
-				}
-			}
-			System.out.println("resultX is " + result);
+			result = menu.getLastObjectWeidht();
 		}
 		if (result == 0 && auxDim != null) {
 			return auxDim.calcHeight();
@@ -160,22 +145,7 @@ public class ExtendToLimitInteligentDimension extends InteligentDimension {
 			}
 			//System.out.println("result is " + result);
 		} else if (menu != null) {
-			for (GameObject object : menu.getGameObjects()) {
-				boolean valid = true;
-				if (object.hasInteligence() && object.getInteligentPosition() instanceof ReferenceBordersInteligentPosition) {
-					ReferenceBordersInteligentPosition inteligentPosition = (ReferenceBordersInteligentPosition) object.getInteligentPosition();
-					if (inteligentPosition.getHorizontalBorder() == HorizontalBorders.DOWN) {
-						valid = false;
-					}
-				}
-				if (valid) {
-					int sum = (int) (object.getY() + object.getDimension().getY());
-					if (result < sum) {
-						result = sum;
-					}
-				}
-			}
-			System.out.println("resultY is " + result);
+			result = menu.getLastObjectHeight();
 		}
 		if (result == 0 && auxDim != null) {
 			return auxDim.calcHeight();

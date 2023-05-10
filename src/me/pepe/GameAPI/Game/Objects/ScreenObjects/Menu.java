@@ -18,9 +18,12 @@ import me.pepe.GameAPI.TextureManager.Animation;
 import me.pepe.GameAPI.Utils.DOMUtils;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.Margin;
+import me.pepe.GameAPI.Utils.Borders.HorizontalBorders;
+import me.pepe.GameAPI.Utils.Borders.VerticalBorders;
 import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
+import me.pepe.GameAPI.Utils.InteligentPositions.ReferenceBordersInteligentPosition;
 
 public abstract class Menu extends GameObject {
 	/*
@@ -189,6 +192,44 @@ public abstract class Menu extends GameObject {
 	}
 	public void registerClick(int x, int y) {
 		onClick(x, y);
+	}
+	public int getLastObjectWeidht() {
+		int result = 0;
+		for (GameObject object : getGameObjectClonned()) {
+			boolean valid = true;
+			if (object.hasInteligence() && object.getInteligentPosition() instanceof ReferenceBordersInteligentPosition) {
+				ReferenceBordersInteligentPosition inteligentPosition = (ReferenceBordersInteligentPosition) object.getInteligentPosition();
+				if (inteligentPosition.getVerticalBorder() == VerticalBorders.RIGHT) {
+					valid = false;
+				}
+			}
+			if (valid) {
+				int sum = (int) (object.getX() + object.getDimension().getX());
+				if (result < sum) {
+					result = sum;
+				}
+			}
+		}
+		return result;
+	}
+	public int getLastObjectHeight() {
+		int result = 0;
+		for (GameObject object : getGameObjectClonned()) {
+			boolean valid = true;
+			if (object.hasInteligence() && object.getInteligentPosition() instanceof ReferenceBordersInteligentPosition) {
+				ReferenceBordersInteligentPosition inteligentPosition = (ReferenceBordersInteligentPosition) object.getInteligentPosition();
+				if (inteligentPosition.getHorizontalBorder() == HorizontalBorders.DOWN) {
+					valid = false;
+				}
+			}
+			if (valid) {
+				int sum = (int) (object.getY() + object.getDimension().getY());
+				if (result < sum) {
+					result = sum;
+				}
+			}
+		}
+		return result;
 	}
 	public abstract void onClick(int x, int y);
 	public Margin getMargin() {
