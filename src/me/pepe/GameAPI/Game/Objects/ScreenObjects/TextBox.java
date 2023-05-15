@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 import me.pepe.GameAPI.Game.Game;
@@ -26,6 +27,7 @@ public abstract class TextBox extends GameObject {
 	private boolean over = false;
 	private boolean drawLine = false;
 	private long timeToDrawLine = 0;
+	private TextBox nextTextBox;
 	public TextBox(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
 		this(null, text, intPos, game, intDim, false);
 	}
@@ -87,19 +89,22 @@ public abstract class TextBox extends GameObject {
 		return over;
 	}
 	public void onPress(int key) {
-		if (key == 37) {
+		if (key == KeyEvent.VK_LEFT) {
 			setCaretPosition(getCaretPosition() - 1);
-		} else if (key == 39) {
+		} else if (key == KeyEvent.VK_RIGHT) {
 			setCaretPosition(getCaretPosition() + 1);
-		} else if (key == 8) {
+		} else if (key == 8) { // boton de borrar
 			if (!text.isEmpty() && caret != 0) {
 				text = text.substring(0, caret-1) + text.substring(caret, text.length());
 				caret--;	
 			}
-		} else if (key == 127) {
+		} else if (key == 127) { // suprimir
 			if (caret != text.length()) {
 				text = text.substring(0, caret) + text.substring(caret+1, text.length());
 			}		
+		} else if (key == KeyEvent.VK_TAB) {
+			unFocus();
+			nextTextBox.requestFocus();
 		}
 	}
 	public void requestFocus() {
@@ -187,6 +192,12 @@ public abstract class TextBox extends GameObject {
 	}
 	public void setFont(Font font) {
 		this.font = font;
+	}
+	public TextBox getNextTextBox() {
+		return nextTextBox;
+	}
+	public void setNextTextBox(TextBox nextTextBox) {
+		this.nextTextBox = nextTextBox;
 	}
 	public abstract void onFocus();
 }

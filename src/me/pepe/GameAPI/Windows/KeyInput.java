@@ -65,7 +65,7 @@ public abstract class KeyInput extends KeyAdapter {
 	private void textBoxKeyEvent(KeyEvent event, int key, TextBox tb) {
 		if (tb.isFocused()) {
 			tb.onPress(key);
-			if (key != 8 && key != 127) {
+			if (key != 8 && key != 127 && key != KeyEvent.VK_ENTER && key != KeyEvent.VK_TAB) {
 				char c = event.getKeyChar();
 				// queda por hacer las tildes
 				//System.out.println(event.getKeyCode() + " - " + event.getKeyChar() + " - " + event.isMetaDown());

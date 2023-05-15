@@ -63,6 +63,7 @@ public abstract class MouseInput extends MouseAdapter {
 	    	if (object instanceof Menu) {
 				Menu menu = (Menu) object;
 				if (menu.isOver()) {
+					menu = getResultMenu(menu);
 					menu.setStartRender(new GameLocation(menu.getStartRender().getX(), menu.getStartRender().getY() + (MouseButtons.getClickedButton(id) == MouseButtons.WHEEL_DOWN ? -10 : 10)));
 				}
 			}

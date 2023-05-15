@@ -37,6 +37,7 @@ public abstract class Menu extends GameObject {
 	private int maxMoveX, maxMoveY = 0;
 	private boolean clicked = false;
 	private Margin margin = new Margin();
+	private boolean paintBackground = true;
 	public Menu(InteligentPosition intPos, Game game, InteligentDimension intDim) {
 		this("", intPos, game, intDim);
 	}
@@ -98,18 +99,44 @@ public abstract class Menu extends GameObject {
 		}
 		return result;
 	}
+	public int calcMaxMoveY() {
+		int result = 0;
+		for (GameObject object : getGameObjects()) {
+			int endY = (int) (object.getY() + object.getDimension().getY() - getDimension().getY());
+			if (result < endY) {
+				result = endY;
+			}
+		}
+		return result;
+	}
 	public void setStartRender(GameLocation startRender) {
 		double x = startRender.getX();
 		double y = startRender.getY();
-		if (startRender.getX() < maxMoveX) {
-			x = maxMoveX;
-		} else if (startRender.getX() > 0) {
-			x = 0;
+		if (maxMoveX < 0) {
+			if (startRender.getX() < maxMoveX) {
+				x = maxMoveX;
+			} else if (startRender.getX() > 0) {
+				x = 0;
+			}
+		} else {
+			if (startRender.getX() > maxMoveX) {
+				x = maxMoveX;
+			} else if (startRender.getX() < 0) {
+				x = 0;
+			}
 		}
-		if (startRender.getY() < maxMoveY) {
-			y = maxMoveY;
-		} else if (startRender.getY() > 0) {
-			y = 0;
+		if (maxMoveY < 0) {
+			if (startRender.getY() < maxMoveY) {
+				y = maxMoveY;
+			} else if (startRender.getY() > 0) {
+				y = 0;
+			}
+		} else {
+			if (startRender.getY() > maxMoveY) {
+				y = maxMoveY;
+			} else if (startRender.getY() < 0) {
+				y = 0;
+			}
 		}
 		System.out.println("StartRender: " + x + " - " + y);
 		this.startRender = new GameLocation(x, y);
@@ -132,7 +159,9 @@ public abstract class Menu extends GameObject {
 		g.dispose();
 		BufferedImage finalImage = new BufferedImage(width <= 0 ? 1 : width + Math.abs((int) startRender.getX()), height <= 0 ? 1 : height + Math.abs((int) startRender.getY()), BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2 = finalImage.createGraphics();
-		g2.fillRect(0, 0, width-1, height-1);
+		if (paintBackground) {
+			g2.fillRect(0, 0, width-1, height-1);
+		}
 		g2.drawImage(image, 0 + ((int) startRender.getX()), 0 + ((int) startRender.getY()), null);
 		g.dispose();
 		return finalImage;
@@ -246,5 +275,11 @@ public abstract class Menu extends GameObject {
 		for (Node object : DOMUtils.getChildrens(DOMUtils.getChild(node, "objects"))) {
 			GameObject.build(this, this, getGame(), object);
 		}
+	}
+	public boolean isPaintBackground() {
+		return paintBackground;
+	}
+	public void setPaintBackground(boolean paintBackgroun) {
+		this.paintBackground = paintBackgroun;
 	}
 }

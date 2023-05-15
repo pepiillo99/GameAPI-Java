@@ -26,6 +26,7 @@ public class Game extends Canvas implements Runnable {
 	public Game(String windowsName, int wx, int wy, Image icon) {
 		screenManager = new ScreenManager(this);
 		windows = new Windows(windowsName, wx, wy, icon, this);
+		setFocusTraversalKeysEnabled(false);
 	}
 	private long start = 0;
 	public void start() {

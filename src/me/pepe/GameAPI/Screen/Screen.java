@@ -240,7 +240,15 @@ public abstract class Screen {
 		return mouseLoc;
 	}
 	public GameLocation getMouseLocation(Menu menu) {
-		return new GameLocation(mouseLoc.getX() - menu.getX(), mouseLoc.getY() - menu.getY());
+		int menuXLoc = 0;
+		int menuYLoc = 0;
+		Menu lastMenu = menu;
+		while (lastMenu.isOnMenu()) {
+			lastMenu = lastMenu.getMenu();
+			menuXLoc += lastMenu.getX();
+			menuYLoc += lastMenu.getY();
+		}
+		return new GameLocation(mouseLoc.getX() - menu.getX() - menuXLoc, mouseLoc.getY() - menu.getY() - menuYLoc);
 	}
 	public void restartObjects(Class<? extends GameObject> clase) {
 		Iterator<GameObject> iterator = getGameObjectClonned().iterator();
