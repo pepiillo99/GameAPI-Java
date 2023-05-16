@@ -27,6 +27,8 @@ public abstract class TextBox extends GameObject {
 	private boolean over = false;
 	private boolean drawLine = false;
 	private long timeToDrawLine = 0;
+	private int textLimit = -1;
+	private boolean onlyNumbers = false;
 	private TextBox nextTextBox;
 	public TextBox(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
 		this(null, text, intPos, game, intDim, false);
@@ -70,8 +72,22 @@ public abstract class TextBox extends GameObject {
 		return focused;
 	}
 	public void write(char c) {
-		this.text += c;
-		caret++;
+		if (onlyNumbers ) {
+			try {
+				Integer.valueOf(text + c);
+			} catch (NumberFormatException ex) {
+				return;
+			}
+		}
+		if (textLimit != -1) {
+			if (textLimit > text.length()) {
+				this.text += c;
+				caret++;
+			}
+		} else {
+			this.text += c;
+			caret++;
+		}
 	}
 	public int getCaretPosition() {
 		return caret;
@@ -104,7 +120,9 @@ public abstract class TextBox extends GameObject {
 			}		
 		} else if (key == KeyEvent.VK_TAB) {
 			unFocus();
-			nextTextBox.requestFocus();
+			if (nextTextBox != null) {
+				nextTextBox.requestFocus();
+			}
 		}
 	}
 	public void requestFocus() {
@@ -198,6 +216,18 @@ public abstract class TextBox extends GameObject {
 	}
 	public void setNextTextBox(TextBox nextTextBox) {
 		this.nextTextBox = nextTextBox;
+	}
+	public boolean isOnlyNumbers() {
+		return onlyNumbers;
+	}
+	public void setOnlyNumbers(boolean on) {
+		this.onlyNumbers = on;
+	}
+	public void setTextLimit(int textLimit) {
+		this.textLimit = textLimit;
+	}
+	public int getTextLimit() {
+		return textLimit;
 	}
 	public abstract void onFocus();
 }
