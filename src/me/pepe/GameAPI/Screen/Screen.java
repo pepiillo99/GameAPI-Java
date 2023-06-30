@@ -5,6 +5,10 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -120,7 +124,12 @@ public abstract class Screen {
 	public void tick() {
 		if (getMouseInput() != null) {
 			getMouseInput().tick();
-			mouseLoc = new GameLocation(getMouseInput().getX(), getMouseInput().getY());
+			if (mouseLoc == null) {
+				mouseLoc = new GameLocation(getMouseInput().getX(), getMouseInput().getY());
+			} else {
+				mouseLoc.setX(getMouseInput().getX());
+				mouseLoc.setY(getMouseInput().getY());
+			}
 		}
 		if (getKeyInput() != null) {
 			getKeyInput().tick();
@@ -275,8 +284,22 @@ public abstract class Screen {
 		this.fRender = fRender;
 	}
 	public void loadFromXML(String filePath) {
-		File file = new File(this.getClass().getClassLoader().getResource(filePath).getPath().replace("%c3%b3", "ó").replace("bin", "resources"));
-		loadFromXML(file);
+		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(filePath);
+		File tempFile;
+		try {
+			tempFile = File.createTempFile("temp", null);
+			// Copia el contenido del flujo de entrada al archivo temporal
+			try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+			    byte[] buffer = new byte[8192];
+			    int bytesRead;
+			    while ((bytesRead = inputStream.read(buffer)) != -1) {
+			        outputStream.write(buffer, 0, bytesRead);
+			    }
+			}
+			loadFromXML(tempFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	public void loadFromXML(File file) {
 		long startLoad = System.currentTimeMillis();

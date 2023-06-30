@@ -224,11 +224,16 @@ public abstract class GameObject {
 		if (hasInteligence()) {
 			x = intPos.calculateX(intDim, intPostOffSetX);
 			y = intPos.calculateY(intDim, intPostOffSetY);
-			dimension = new ObjectDimension(intDim.calcWeidht(), intDim.calcHeight());
-			if (hitBox != null) {
-				hitBox.setBounds((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
+			if (dimension == null) {
+				dimension = new ObjectDimension(intDim.calcWeidht(), intDim.calcHeight());
 			} else {
+				dimension.setX(intDim.calcWeidht());
+				dimension.setY(intDim.calcHeight());
+			}
+			if (hitBox == null) {
 				hitBox = new Rectangle((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
+			} else {
+				hitBox.setBounds((int) x, (int) y, (int) dimension.getX(), (int) dimension.getY());
 			}
 		}
 	}

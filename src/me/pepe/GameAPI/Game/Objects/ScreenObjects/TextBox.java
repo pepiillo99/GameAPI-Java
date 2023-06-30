@@ -81,13 +81,28 @@ public abstract class TextBox extends GameObject {
 		}
 		if (textLimit != -1) {
 			if (textLimit > text.length()) {
-				this.text += c;
+				if (caret == text.length()) {
+					this.text += c;
+				} else {
+					this.text = getPartText(0, caret) + c + getPartText(caret, text.length());
+				}
 				caret++;
 			}
 		} else {
-			this.text += c;
+			if (caret == text.length()) {
+				this.text += c;
+			} else {
+				this.text = getPartText(0, caret) + c + getPartText(caret, text.length());
+			}
 			caret++;
 		}
+	}
+	private String getPartText(int init, int fin) {
+		String sol = "";
+		for (int i = init; i < fin; i++) {
+			sol = sol + text.charAt(i);
+		}
+		return sol;
 	}
 	public int getCaretPosition() {
 		return caret;
