@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import me.pepe.GameAPI.Game.Game;
+import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.TextureManager.TextureDistance;
 import me.pepe.GameAPI.TextureManager.Texture.Texture;
 import me.pepe.GameAPI.Utils.Utils;
@@ -17,19 +17,19 @@ public abstract class ImageButton extends Button {
 	private Texture texture;
 	private BufferedImage directedTexture;
 	private String text;
-	public ImageButton(Texture texture, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this(null, texture, intPos, game, intDim);
+	public ImageButton(Texture texture, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		this(null, texture, intPos, screen, intDim);
 	}
-	public ImageButton(String text, Texture texture, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(intPos, game, intDim);
+	public ImageButton(String text, Texture texture, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		super(intPos, screen, intDim);
 		this.texture = texture;
 		this.text = text;
 	}
-	public ImageButton(BufferedImage directedTexture, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this(null, directedTexture, intPos, game, intDim);
+	public ImageButton(BufferedImage directedTexture, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		this(null, directedTexture, intPos, screen, intDim);
 	}
-	public ImageButton(String text, BufferedImage directedTexture, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(intPos, game, intDim);
+	public ImageButton(String text, BufferedImage directedTexture, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		super(intPos, screen, intDim);
 		this.directedTexture = directedTexture;
 		this.text = text;
 	}

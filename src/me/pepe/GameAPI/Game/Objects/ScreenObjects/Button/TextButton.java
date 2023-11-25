@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import me.pepe.GameAPI.Game.Game;
+import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.Utils.Utils;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
@@ -14,11 +14,11 @@ public abstract class TextButton extends Button {
 	private String text = "";
 	private int[] letterColor = new int[] {255, 0, 0};
 	private int[] boxColor = new int[] {125, 125, 125};
-	public TextButton(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this("", text, intPos, game, intDim);
+	public TextButton(String text, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		this("", text, intPos, screen, intDim);
 	}
-	public TextButton(String id, String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(id, intPos, game, intDim);
+	public TextButton(String id, String text, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		super(id, intPos, screen, intDim);
 		this.text = text;
 	}
 	public String getText() {

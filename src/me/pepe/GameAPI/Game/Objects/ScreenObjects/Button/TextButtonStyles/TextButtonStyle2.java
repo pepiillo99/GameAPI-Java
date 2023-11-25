@@ -5,8 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Button.TextButton;
+import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.Utils.RenderUtils;
 import me.pepe.GameAPI.Utils.Utils;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
@@ -18,11 +18,11 @@ public abstract class TextButtonStyle2 extends TextButton {
 	private long transDuration = 250;
 	private long transTime = 0;
 	private long lastRender = 0;
-	public TextButtonStyle2(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this("", text, intPos, game, intDim);
+	public TextButtonStyle2(String text, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		this("", text, intPos, screen, intDim);
 	}
-	public TextButtonStyle2(String id, String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(text, intPos, game, intDim);
+	public TextButtonStyle2(String id, String text, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		super(text, intPos, screen, intDim);
 		setBoxColor(Color.CYAN);
 		setLetterColor(Color.WHITE);
 	}

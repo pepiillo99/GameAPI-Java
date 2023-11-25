@@ -5,8 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Button.TextButton;
+import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.Utils.RenderUtils;
 import me.pepe.GameAPI.Utils.Utils;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
@@ -20,11 +20,11 @@ public abstract class TextButtonStyle1 extends TextButton {
 	private long lastRender = 0;
 	private Color toBoxColor = Color.YELLOW;
 	private Color toLetterColor = Color.BLACK;
-	public TextButtonStyle1(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this("", text, intPos, game, intDim);
+	public TextButtonStyle1(String text, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		this("", text, intPos, screen, intDim);
 	}
-	public TextButtonStyle1(String id, String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(id, text, intPos, game, intDim);
+	public TextButtonStyle1(String id, String text, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		super(id, text, intPos, screen, intDim);
 		setBoxColor(Color.PINK);
 		setLetterColor(Color.WHITE);
 	}

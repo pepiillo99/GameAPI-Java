@@ -9,8 +9,8 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
-import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
+import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
@@ -30,14 +30,14 @@ public abstract class TextBox extends GameObject {
 	private int textLimit = -1;
 	private boolean onlyNumbers = false;
 	private TextBox nextTextBox;
-	public TextBox(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this(null, text, intPos, game, intDim, false);
+	public TextBox(String text, InteligentPosition intPos, Screen Screen, InteligentDimension intDim) {
+		this(null, text, intPos, Screen, intDim, false);
 	}
-	public TextBox(String text, InteligentPosition intPos, Game game, InteligentDimension intDim, boolean ocult) {
-		this(null, text, intPos, game, intDim, ocult);
+	public TextBox(String text, InteligentPosition intPos, Screen Screen, InteligentDimension intDim, boolean ocult) {
+		this(null, text, intPos, Screen, intDim, ocult);
 	}
-	public TextBox(String id, String text, InteligentPosition intPos, Game game, InteligentDimension intDim, boolean ocult) {
-		super(id, intPos, game, intDim);
+	public TextBox(String id, String text, InteligentPosition intPos, Screen Screen, InteligentDimension intDim, boolean ocult) {
+		super(id, intPos, Screen, intDim);
 		this.text = text;
 		this.ocult = ocult;
 	}

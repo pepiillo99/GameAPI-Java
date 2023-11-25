@@ -12,9 +12,8 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
-import me.pepe.GameAPI.TextureManager.Animation;
+import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.Utils.DOMUtils;
 import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.Margin;
@@ -38,11 +37,11 @@ public abstract class Menu extends GameObject {
 	private boolean clicked = false;
 	private Margin margin = new Margin();
 	private boolean paintBackground = true;
-	public Menu(InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this("", intPos, game, intDim);
+	public Menu(InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		this("", intPos, screen, intDim);
 	}
-	public Menu(String id, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(id, intPos, game, intDim);
+	public Menu(String id, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		super(id, intPos, screen, intDim);
 	}
 	@Override
 	public void tick() {
@@ -273,7 +272,7 @@ public abstract class Menu extends GameObject {
 		Document doc = DOMUtils.abrirDOM(file);
 		Node node = doc.getFirstChild();
 		for (Node object : DOMUtils.getChildrens(DOMUtils.getChild(node, "objects"))) {
-			GameObject.build(this, this, getGame(), object);
+			GameObject.build(this, this, getScreen(), object);
 		}
 	}
 	public boolean isPaintBackground() {

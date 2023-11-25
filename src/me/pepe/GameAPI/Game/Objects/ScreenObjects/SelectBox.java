@@ -4,19 +4,19 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 
-import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
+import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
 
 public abstract class SelectBox extends GameObject {
 	private boolean selected = false;
 	private boolean over = false;
-	public SelectBox(InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this("", intPos, game, intDim);
+	public SelectBox(InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		this("", intPos, screen, intDim);
 	}
-	public SelectBox(String id, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(id, intPos, game, intDim);
+	public SelectBox(String id, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		super(id, intPos, screen, intDim);
 	}
 	@Override
 	public void tick() {

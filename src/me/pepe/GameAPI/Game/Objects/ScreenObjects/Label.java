@@ -6,8 +6,8 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
+import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.Utils.LabelAligment;
 import me.pepe.GameAPI.Utils.LabelPart;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
@@ -22,14 +22,14 @@ public class Label extends GameObject {
 	private Color background;
 	private boolean underlined = false;
 	private Color underlineColor = Color.BLACK;
-	public Label(String text, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this(text, Color.BLACK, new Font("Aria", Font.BOLD, 10), null, intPos, game, intDim);
+	public Label(String text, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		this(text, Color.BLACK, new Font("Aria", Font.BOLD, 10), null, intPos, screen, intDim);
 	}
-	public Label(String text, Color color, Font font, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		this(text, color, font, null, intPos, game, intDim);
+	public Label(String text, Color color, Font font, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		this(text, color, font, null, intPos, screen, intDim);
 	}
-	public Label(String text, Color color, Font font, String id, InteligentPosition intPos, Game game, InteligentDimension intDim) {
-		super(id, intPos, game, intDim);
+	public Label(String text, Color color, Font font, String id, InteligentPosition intPos, Screen screen, InteligentDimension intDim) {
+		super(id, intPos, screen, intDim);
 		this.text = text;
 		this.color = color;
 		this.font = font;

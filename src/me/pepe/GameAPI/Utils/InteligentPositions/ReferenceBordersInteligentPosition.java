@@ -13,6 +13,8 @@ public class ReferenceBordersInteligentPosition extends InteligentPosition {
 	private Menu menu;
 	private VerticalBorders vertical;
 	private HorizontalBorders horizontal;
+	private boolean centerX = false;
+	private boolean centerY = false;
 	public ReferenceBordersInteligentPosition(int x, int y, Windows windows, VerticalBorders vertical, HorizontalBorders horizontal) {
 		this(x, y, windows, null, vertical, horizontal);
 	}
@@ -54,16 +56,24 @@ public class ReferenceBordersInteligentPosition extends InteligentPosition {
 			}		
 		} else {
 			if (windows != null) {
-				if (vertical.equals(VerticalBorders.RIGHT)) {
-					return windows.getXToPaint() - x;
-				} else if (vertical.equals(VerticalBorders.LEFT)) {
-					return x;
+				if (centerX) {
+					return windows.getXToPaint() / 2;
+				} else {
+					if (vertical.equals(VerticalBorders.RIGHT)) {
+						return windows.getXToPaint() - x;
+					} else if (vertical.equals(VerticalBorders.LEFT)) {
+						return x;
+					}
 				}
 			} else if (menu != null ) {
-				if (vertical.equals(VerticalBorders.RIGHT)) {
-					return (int) (menu.getDimension().getX() - x);
-				} else if (vertical.equals(VerticalBorders.LEFT)) {
-					return x;
+				if (centerX) {
+					return (int) (menu.getDimension().getX() / 2);
+				} else {
+					if (vertical.equals(VerticalBorders.RIGHT)) {
+						return (int) (menu.getDimension().getX() - x);
+					} else if (vertical.equals(VerticalBorders.LEFT)) {
+						return x;
+					}
 				}
 			}
 		}
@@ -79,19 +89,35 @@ public class ReferenceBordersInteligentPosition extends InteligentPosition {
 			}		
 		} else {
 			if (windows != null) {
-				if (horizontal.equals(HorizontalBorders.DOWN)) {
-					return windows.getYToPaint() - y;
-				} else if (horizontal.equals(HorizontalBorders.UP)) {
-					return y;
+				if (centerY) {
+					return windows.getYToPaint() / 2;
+				} else {
+					if (horizontal.equals(HorizontalBorders.DOWN)) {
+						return windows.getYToPaint() - y;
+					} else if (horizontal.equals(HorizontalBorders.UP)) {
+						return y;
+					}
 				}
 			} else if (menu != null ) {
-				if (horizontal.equals(HorizontalBorders.DOWN)) {
-					return (int) (menu.getDimension().getY() - y);
-				} else if (horizontal.equals(HorizontalBorders.UP)) {
-					return y;
+				if (centerY) {
+					return (int) (menu.getDimension().getY() / 2);
+				} else {
+					if (horizontal.equals(HorizontalBorders.DOWN)) {
+						return (int) (menu.getDimension().getY() - y);
+					} else if (horizontal.equals(HorizontalBorders.UP)) {
+						return y;
+					}
 				}
 			}
 		}
 		return -1;
+	}
+	public ReferenceBordersInteligentPosition centerX(boolean center) {
+		this.centerX = center;
+		return this;
+	}
+	public ReferenceBordersInteligentPosition centerY(boolean center) {
+		this.centerY = center;
+		return this;
 	}
 }

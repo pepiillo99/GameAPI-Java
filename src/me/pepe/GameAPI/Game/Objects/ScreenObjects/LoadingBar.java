@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
-import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
+import me.pepe.GameAPI.Screen.Screen;
 import me.pepe.GameAPI.Utils.RenderUtils;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
 import me.pepe.GameAPI.Utils.InteligentPositions.PixelInteligentPosition;
@@ -20,14 +20,14 @@ public class LoadingBar extends GameObject {
 	private Color porcentColor = Color.WHITE;
 	private Color completeColor = Color.GREEN;
 	private String textExtra = "";
-	public LoadingBar(int porcent, InteligentPosition intPos, Game game, InteligentDimension intRes) {
-		this("", porcent, true, intPos, game, intRes);
+	public LoadingBar(int porcent, InteligentPosition intPos, Screen screen, InteligentDimension intRes) {
+		this("", porcent, true, intPos, screen, intRes);
 	}
-	public LoadingBar(int porcent, boolean showPorcent, InteligentPosition intPos, Game game, InteligentDimension intRes) {
-		this("", porcent, showPorcent, intPos, game, intRes);
+	public LoadingBar(int porcent, boolean showPorcent, InteligentPosition intPos, Screen screen, InteligentDimension intRes) {
+		this("", porcent, showPorcent, intPos, screen, intRes);
 	}
-	public LoadingBar(String id, int porcent, boolean showPorcent, InteligentPosition intPos, Game game, InteligentDimension intRes) {
-		super(id, intPos, game, intRes);
+	public LoadingBar(String id, int porcent, boolean showPorcent, InteligentPosition intPos, Screen screen, InteligentDimension intRes) {
+		super(id, intPos, screen, intRes);
 		this.porcent = porcent;
 		this.showPorcent = showPorcent;
 	}

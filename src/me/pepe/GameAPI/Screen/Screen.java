@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -21,7 +21,6 @@ import org.w3c.dom.Node;
 import me.pepe.GameAPI.Game.Game;
 import me.pepe.GameAPI.Game.Objects.GameObject;
 import me.pepe.GameAPI.Game.Objects.ScreenObjects.Menu;
-import me.pepe.GameAPI.TextureManager.Animation;
 import me.pepe.GameAPI.Utils.DOMUtils;
 import me.pepe.GameAPI.Utils.FirstRender;
 import me.pepe.GameAPI.Utils.GameLocation;
@@ -37,8 +36,9 @@ public abstract class Screen {
 	private MouseInput mouseInput;
 	private GameLocation mouseLoc = new GameLocation(0, 0);
 	private KeyInput keyInput;
-	private HashMap<String, GameObject> objects = new HashMap<String, GameObject>();
-	private List<Animation> animations = new ArrayList<Animation>();
+	private HashMap<String, GameObject> objects = new HashMap<String, GameObject>(); // string - object
+	private HashMap<Integer, String> objectsOrdenedWithPaintIndex = new HashMap<Integer, String>(); // order - objectID
+	private boolean needReordennedObjects = true;
 	private boolean loaded = false;
 	private int cursor = Cursor.DEFAULT_CURSOR;
 	private FirstRender fRender = FirstRender.BUILD;
@@ -56,25 +56,15 @@ public abstract class Screen {
 		};
 		this.mouseInput = new MouseInput(this) {
 			@Override
-			public void tick() {
-				
-			}
+			public void tick() {}
 			@Override
-			public void onClick(MouseButtons mouseButton) {
-				
-			}
+			public void onClick(MouseButtons mouseButton) {}
 			@Override
-			public void onWheelMoved(MouseButtons mouseButton) {
-				
-			}
+			public void onWheelMoved(MouseButtons mouseButton) {}
 			@Override
-			public void onButtonPressed(MouseButtons mouseButton) {
-				
-			}
+			public void onButtonPressed(MouseButtons mouseButton) {}
 			@Override
-			public void onButtonReleased(MouseButtons mouseButton) {
-				
-			}			
+			public void onButtonReleased(MouseButtons mouseButton) {}			
 		};
 	}
 	public Screen(Windows windows, Game game, MouseInput mouseInput, KeyInput keyInput) {
@@ -97,20 +87,18 @@ public abstract class Screen {
 		}
 		if (fRender.equals(FirstRender.BUILD)) {
 			paintLevel(g);
-			for (GameObject object : getGameObjectClonned()) {
-				object.internalRender(g);
-			}
-			ArrayList<Animation> animation_copy = (ArrayList<Animation>) ((ArrayList<Animation>) animations).clone();
-			for (Animation anim : animation_copy) {
-				anim.render(g);
+			for (Entry<Integer, String> objectEntry : objectsOrdenedWithPaintIndex.entrySet()) {
+				GameObject object = getGameObject(objectEntry.getValue());
+				if (object != null) {
+					object.internalRender(g);
+				}
 			}
 		} else {
-			for (GameObject object : getGameObjectClonned()) {
-				object.internalRender(g);
-			}
-			ArrayList<Animation> animation_copy = (ArrayList<Animation>) ((ArrayList<Animation>) animations).clone();
-			for (Animation anim : animation_copy) {
-				anim.render(g);
+			for (Entry<Integer, String> objectEntry : objectsOrdenedWithPaintIndex.entrySet()) {
+				GameObject object = getGameObject(objectEntry.getValue());
+				if (object != null) {
+					object.internalRender(g);
+				}
 			}
 			paintLevel(g);
 		}
@@ -133,6 +121,23 @@ public abstract class Screen {
 		}
 		if (getKeyInput() != null) {
 			getKeyInput().tick();
+		}
+		if (needReordennedObjects) {
+			objectsOrdenedWithPaintIndex.clear();
+			int size = 0;
+			int count = getGameObjects().size();
+			System.out.println("ordenando " + count);
+			while (count > 0) {
+				for (GameObject go : getGameObjectClonned()) {
+					if (go.getPaintIndex() == size) {
+						objectsOrdenedWithPaintIndex.put(objectsOrdenedWithPaintIndex.size()+1, go.getID());
+						System.out.println("order: " + objectsOrdenedWithPaintIndex.size() + " - " + go.getID());
+						count--;
+					}
+				}
+				size++;
+			}
+			needReordennedObjects = false;
 		}
 		int cursor = this.cursor;
 		for (GameObject object : getGameObjectClonned()) {
@@ -158,7 +163,7 @@ public abstract class Screen {
 	public Windows getWindows() {
 		return windows;
 	}
-	protected Game getGame() {
+	public Game getGame() {
 		return game;
 	}
 	public Color getBackground() {
@@ -199,6 +204,7 @@ public abstract class Screen {
 				extendInteligentDimension.setScreen(this);
 			}
 			objects.put(gameObject.getID(), gameObject);
+			needReordennedObjects = true;
 		} else {
 			throw new IllegalArgumentException("Ya hay un objeto con el nombre " + gameObject.getID() + " en la pantalla " + getClass().getSimpleName());
 		}
@@ -206,20 +212,11 @@ public abstract class Screen {
 	public void removeGameObject(GameObject gameObject) {
 		if (objects.containsKey(gameObject.getID())) {
 			objects.remove(gameObject.getID());
+			needReordennedObjects = true;
 		}
 	}
-	public void addAnimation(Animation anim) {
-		if (!animations.contains(anim)) {
-			animations.add(anim);
-		}
-	}
-	public void removeAnimation(Animation anim) {
-		if (animations.contains(anim)) {
-			animations.remove(anim);
-		}
-	}
-	public void restartAnimations() {
-		animations.clear();
+	public void setNeedReordennedObject() {
+		this.needReordennedObjects = true;
 	}
 	public void restartObjects() {
 		objects.clear();
@@ -274,12 +271,8 @@ public abstract class Screen {
 	public void setCursor(int cursor) {
 		this.cursor = cursor;
 	}
-	public void onOpen() {
-		
-	}
-	public void onQuit() {
-		
-	}
+	public void onOpen() {}
+	public void onQuit() {}
 	public void setFirstRender(FirstRender fRender) {
 		this.fRender = fRender;
 	}
@@ -307,12 +300,10 @@ public abstract class Screen {
 		Document doc = DOMUtils.abrirDOM(file);
 		Node node = doc.getFirstChild();
 		for (Node object : DOMUtils.getChildrens(DOMUtils.getChild(node, "objects"))) {
-			GameObject.build(this, this, getGame(), object);
+			GameObject.build(this, this, this, object);
 		}
 		onLoadXML();
 		System.out.println("Screen loaded in " + (System.currentTimeMillis() - startLoad) + "ms");
 	}
-	public void onLoadXML() {
-		
-	}
+	public void onLoadXML() {}
 }
