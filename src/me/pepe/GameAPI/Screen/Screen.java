@@ -126,12 +126,10 @@ public abstract class Screen {
 			objectsOrdenedWithPaintIndex.clear();
 			int size = 0;
 			int count = getGameObjects().size();
-			System.out.println("ordenando " + count);
 			while (count > 0) {
 				for (GameObject go : getGameObjectClonned()) {
 					if (go.getPaintIndex() == size) {
 						objectsOrdenedWithPaintIndex.put(objectsOrdenedWithPaintIndex.size()+1, go.getID());
-						System.out.println("order: " + objectsOrdenedWithPaintIndex.size() + " - " + go.getID());
 						count--;
 					}
 				}
