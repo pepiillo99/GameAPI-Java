@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
@@ -30,6 +31,7 @@ public abstract class TextBox extends GameObject {
 	private int textLimit = -1;
 	private boolean onlyNumbers = false;
 	private TextBox nextTextBox;
+	private int accent = 0; // 0 sin accento, 1 ú, 2 ù, 3 ü, 4 û
 	public TextBox(String text, InteligentPosition intPos, Screen Screen, InteligentDimension intDim) {
 		this(null, text, intPos, Screen, intDim, false);
 	}
@@ -79,6 +81,11 @@ public abstract class TextBox extends GameObject {
 				return;
 			}
 		}
+		System.out.println(Character.isLowerCase(c) + " " + c);
+		if (accent != 0 && Character.toLowerCase(c) != addAccent(Character.toLowerCase(c), accent)) {
+			c = Character.isUpperCase(c) || Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK) ? Character.toUpperCase(addAccent(Character.toLowerCase(c), accent)) : addAccent(Character.toLowerCase(c), accent);
+			accent = 0;
+		}
 		if (textLimit != -1) {
 			if (textLimit > text.length()) {
 				if (caret == text.length()) {
@@ -97,6 +104,23 @@ public abstract class TextBox extends GameObject {
 			caret++;
 		}
 	}
+    private static char addAccent(char c, int accent) {
+    	// āăąēîïĩíĝġńñšŝśûůŷ 
+        switch (c) {
+            case 'a':
+                return accent == 1 ? 'á' : accent == 2 ? 'à' : accent == 3 ? 'ä' : accent == 4 ? 'â' : c;
+            case 'e':
+                return accent == 1 ? 'é' : accent == 2 ? 'è' : accent == 3 ? 'ë' : accent == 4 ? 'ê' : c;
+            case 'i':
+                return accent == 1 ? 'í' : accent == 2 ? 'ì' : accent == 3 ? 'ï' : accent == 4 ? 'î' : c;
+            case 'o':
+                return accent == 1 ? 'ó' : accent == 2 ? 'ò' : accent == 3 ? 'ö' : accent == 4 ? 'ô' : c;
+            case 'u':
+                return accent == 1 ? 'ú' : accent == 2 ? 'ù' : accent == 3 ? 'ü' : accent == 4 ? 'û' : c;
+            default:
+                return c;
+        }
+    }
 	private String getPartText(int init, int fin) {
 		String sol = "";
 		for (int i = init; i < fin; i++) {
@@ -138,6 +162,46 @@ public abstract class TextBox extends GameObject {
 			if (nextTextBox != null) {
 				nextTextBox.requestFocus();
 			}
+		} else if (key == 128 || key == 129) {
+			if (accent != 0) {
+				if (accent == 1) {
+					write('´');
+				} else if (accent == 2) {
+					write('`');
+				} else if (accent == 3) {
+					write('¨');
+				} else if (accent == 4) {
+					write('^');
+				}
+				if (key == 129) {
+					if (getScreen().getKeyInput().checkIsPressed(KeyEvent.VK_SHIFT)) {
+						write('¨');
+					} else {
+						write('´');
+					}
+				} else if (key == 128) {
+					if (getScreen().getKeyInput().checkIsPressed(KeyEvent.VK_SHIFT)) {
+						write('^');
+					} else {
+						write('`');
+					}
+				}
+				accent = 0;
+			} else {
+				if (key == 129) {
+					if (getScreen().getKeyInput().checkIsPressed(KeyEvent.VK_SHIFT)) {
+						accent = 3;
+					} else {
+						accent = 1;
+					}
+				} else if (key == 128) {
+					if (getScreen().getKeyInput().checkIsPressed(KeyEvent.VK_SHIFT)) {
+						accent = 4;
+					} else {
+						accent = 2;
+					}
+				}
+			}
 		}
 	}
 	public void requestFocus() {
@@ -177,7 +241,7 @@ public abstract class TextBox extends GameObject {
 		}
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
-		int form = fontMetrics.getHeight() - 8;
+		int form = fontMetrics.getHeight() - 4;
 		//System.out.println(fontMetrics.getHeight() + " - " + height + " - " + (form));
 		String text = getText();
 		if (ocult) {
@@ -245,4 +309,10 @@ public abstract class TextBox extends GameObject {
 		return textLimit;
 	}
 	public abstract void onFocus();
+	public int getAccent() {
+		return accent;
+	}
+	public void setAccent(int accent) {
+		this.accent= accent;
+	}
 }
