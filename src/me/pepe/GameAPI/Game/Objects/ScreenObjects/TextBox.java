@@ -70,6 +70,16 @@ public abstract class TextBox extends GameObject {
 			g.drawImage(createImage((int) getDimension().getX(), (int) getDimension().getY()), (int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY(), null);
 		}	
 	}
+	@Override
+	public void renderTick() {
+		if (focused) {
+			if (timeToDrawLine - System.currentTimeMillis() <= 0) {
+				drawLine = !drawLine;
+				timeToDrawLine = System.currentTimeMillis() + 500;
+				needRender = true;
+			}
+		}
+	}
 	public boolean isFocused() {
 		return focused;
 	}
@@ -103,9 +113,10 @@ public abstract class TextBox extends GameObject {
 			}
 			caret++;
 		}
+		needRender = true;
 	}
     private static char addAccent(char c, int accent) {
-    	// āăąēîïĩíĝġńñšŝśûůŷ 
+    	// āăąēîïĩíĝġńñšŝśûůŷ     	
         switch (c) {
             case 'a':
                 return accent == 1 ? 'á' : accent == 2 ? 'à' : accent == 3 ? 'ä' : accent == 4 ? 'â' : c;
@@ -146,17 +157,21 @@ public abstract class TextBox extends GameObject {
 	public void onPress(int key) {
 		if (key == KeyEvent.VK_LEFT) {
 			setCaretPosition(getCaretPosition() - 1);
+			needRender = true;
 		} else if (key == KeyEvent.VK_RIGHT) {
 			setCaretPosition(getCaretPosition() + 1);
+			needRender = true;
 		} else if (key == 8) { // boton de borrar
 			if (!text.isEmpty() && caret != 0) {
 				text = text.substring(0, caret-1) + text.substring(caret, text.length());
-				caret--;	
+				caret--;
+				needRender = true;
 			}
 		} else if (key == 127) { // suprimir
 			if (caret != text.length()) {
 				text = text.substring(0, caret) + text.substring(caret+1, text.length());
-			}		
+				needRender = true;
+			}
 		} else if (key == KeyEvent.VK_TAB) {
 			unFocus();
 			if (nextTextBox != null) {
@@ -216,9 +231,11 @@ public abstract class TextBox extends GameObject {
 			x += getMenu().getStartRender().getX();
 		}
 		focusDiffX = (int) (mosLoc.getX() - x);
+		needRender = true;
 	}
 	public void unFocus() {
 		focused = false;
+		needRender = true;
 	}
 	private BufferedImage createImage(int width, int height) {
 		BufferedImage image = new BufferedImage(width <= 0 ? 1 : width, height <= 0 ? 1 : height, BufferedImage.TYPE_4BYTE_ABGR);
@@ -263,10 +280,6 @@ public abstract class TextBox extends GameObject {
 				int posLine = fontMetrics.stringWidth(text.substring(0, caret));
 				g.setColor(Color.BLACK);
 				g.drawLine(posLine+2, 0, posLine+2, height);
-			}
-			if (timeToDrawLine - System.currentTimeMillis() <= 0) {
-				drawLine = !drawLine;
-				timeToDrawLine = System.currentTimeMillis() + 500;
 			}
 		}
 		g.dispose();

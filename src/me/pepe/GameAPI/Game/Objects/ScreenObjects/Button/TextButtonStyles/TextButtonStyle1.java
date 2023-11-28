@@ -44,23 +44,28 @@ public abstract class TextButtonStyle1 extends TextButton {
 					Utils.drawCenteredString(g, getText(), new Rectangle((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY()), /*Dymos.getInstance().getFontManager().getFont("Airborne").deriveFont(Font.PLAIN, isOver() ? 50 : 45)*/new Font("Aria", Font.BOLD, (int)(getDimension().getY()/1.35)));
 				}
 			}
-			if (isOver()) {
-				if (transTime > 0) {
-					transTime -= System.currentTimeMillis() - lastRender;
-					if (transTime < 0) {
-						transTime = 0;
-					}
-				}
-			} else {
-				if (transTime != transDuration) {
-					transTime += System.currentTimeMillis() - lastRender;
-					if (transTime > transDuration) {
-						transTime = transDuration;
-					}
+		}
+	}
+	@Override
+	public void renderTick() {
+		if (isOver()) {
+			if (transTime > 0) {
+				transTime -= System.currentTimeMillis() - lastRender;
+				needRender = true;
+				if (transTime < 0) {
+					transTime = 0;
 				}
 			}
-			lastRender = System.currentTimeMillis();
+		} else {
+			if (transTime != transDuration) {
+				transTime += System.currentTimeMillis() - lastRender;
+				needRender = true;
+				if (transTime > transDuration) {
+					transTime = transDuration;
+				}
+			}
 		}
+		lastRender = System.currentTimeMillis();
 	}
 	public Color getToBoxColor() {
 		return toBoxColor;

@@ -85,6 +85,25 @@ public abstract class Menu extends GameObject {
 			go.onQuitScreen();
 		}
 	}
+	@Override
+	public boolean needRender() {
+		if (needRender) {
+			return true;
+		} else {
+			for (GameObject gm : getGameObjectClonned()) {
+				if (gm.needRender()) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	@Override
+	public void renderTick() {
+		for (GameObject gm : getGameObjectClonned()) {
+			gm.renderTick();
+		}
+	}
 	public GameLocation getStartRender() {
 		return startRender;
 	}
@@ -139,6 +158,7 @@ public abstract class Menu extends GameObject {
 		}
 		System.out.println("StartRender: " + x + " - " + y);
 		this.startRender = new GameLocation(x, y);
+		needRender = true;
 	}
 	public void setMoveLimits(int maxMoveX, int maxMoveY) {
 		this.maxMoveX = maxMoveX;

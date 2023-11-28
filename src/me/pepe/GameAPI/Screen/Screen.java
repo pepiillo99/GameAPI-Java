@@ -2,7 +2,6 @@ package me.pepe.GameAPI.Screen;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +23,7 @@ import me.pepe.GameAPI.Game.Objects.ScreenObjects.Menu;
 import me.pepe.GameAPI.Utils.DOMUtils;
 import me.pepe.GameAPI.Utils.FirstRender;
 import me.pepe.GameAPI.Utils.GameLocation;
+import me.pepe.GameAPI.Utils.RenderOption;
 import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension;
 import me.pepe.GameAPI.Windows.KeyInput;
 import me.pepe.GameAPI.Windows.MouseInput;
@@ -43,9 +43,12 @@ public abstract class Screen {
 	private int cursor = Cursor.DEFAULT_CURSOR;
 	private FirstRender fRender = FirstRender.BUILD;
 	private Color background = Color.BLACK;
-	public Screen(Windows windows, Game game) {
+	private RenderOption renderOption = RenderOption.PER_FRAME;
+	protected boolean needRender = true;
+	public Screen(Windows windows, Game game, RenderOption renderOption) {
 		this.windows = windows;
 		this.game = game;
+		this.renderOption = renderOption;
 		this.keyInput = new KeyInput(this) {
 			@Override
 			public void tick() {}
@@ -73,41 +76,91 @@ public abstract class Screen {
 		this.mouseInput = mouseInput;
 		this.keyInput = keyInput;
 	}
+	public Screen(Windows windows, Game game, MouseInput mouseInput, KeyInput keyInput, RenderOption renderOption) {
+		this.windows = windows;
+		this.game = game;
+		this.mouseInput = mouseInput;
+		this.keyInput = keyInput;
+		this.renderOption = renderOption;
+	}
+	public Screen(Windows windows, Game game) {
+		this(windows, game, RenderOption.PER_FRAME);
+	}
 	public boolean isLoaded() {
 		return loaded;
 	}
 	public void setLoaded() {
 		loaded = true;
 	}
+	public RenderOption getRenderOption() {
+		return renderOption;
+	}
+	public boolean needRender() {
+		if (renderOption.equals(RenderOption.PER_FRAME)) {
+			return true;
+		} else if (renderOption.equals(RenderOption.WHEN_NEED)) {
+			if (needRender) {
+				return true;
+			} else {
+				for (GameObject gm : getGameObjectClonned()) {
+					if (gm.needRender()) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+		return false;
+	}
+	public void setScreenNeedRender(boolean needRender) {
+		this.needRender = needRender;
+	}
+	public boolean screenNeedRender() {
+		return needRender;
+	}
+	public void internalRenderTick() {
+		renderTick();
+		for (GameObject gm : getGameObjectClonned()) {
+			gm.renderTick();
+		}
+	}
+	public void renderTick() {}
 	public boolean informed = false;
-	public void buildLevel(Graphics g) {
+	public int buildLevel(Graphics g) {
+		int objectRendered = 0;
 		if (!informed) {
 			System.out.println(System.currentTimeMillis() - getWindows().start + "ms en renderizar");
 			informed = true;
 		}
 		if (fRender.equals(FirstRender.BUILD)) {
-			paintLevel(g);
+			if (renderOption.equals(RenderOption.PER_FRAME) || (renderOption.equals(RenderOption.WHEN_NEED) && needRender)) {
+				paintLevel(g);
+				objectRendered++;
+			}
 			for (Entry<Integer, String> objectEntry : objectsOrdenedWithPaintIndex.entrySet()) {
 				GameObject object = getGameObject(objectEntry.getValue());
-				if (object != null) {
+				if (object != null && (renderOption.equals(RenderOption.PER_FRAME) || (renderOption.equals(RenderOption.WHEN_NEED) && object.needRender())) || needRender) {
 					object.internalRender(g);
+					objectRendered++;
 				}
 			}
 		} else {
 			for (Entry<Integer, String> objectEntry : objectsOrdenedWithPaintIndex.entrySet()) {
 				GameObject object = getGameObject(objectEntry.getValue());
-				if (object != null) {
+				if (object != null && (renderOption.equals(RenderOption.PER_FRAME) || (renderOption.equals(RenderOption.WHEN_NEED) && object.needRender())) || needRender) {
 					object.internalRender(g);
+					objectRendered++;
 				}
 			}
-			paintLevel(g);
+			if (renderOption.equals(RenderOption.PER_FRAME) || (renderOption.equals(RenderOption.WHEN_NEED) && needRender)) {
+				paintLevel(g);
+				objectRendered++;
+			}
 		}
-		g.setColor(getFPSTPSColor(getGame().getTPS(), getGame().getFPS()));
-		g.setFont(new Font("Aria", Font.PLAIN, 10));
-		// https://stackoverflow.com/questions/5652344/how-can-i-use-a-custom-font-in-java
-		if (game.isShowInfo()) {
-			g.drawString("FPS: " + getGame().getFPS() + " TPS: " + getGame().getTPS(), 0, 10);
+		if (renderOption.equals(RenderOption.WHEN_NEED)) {
+			needRender = false;
 		}
+		return objectRendered;
 	}
 	public void tick() {
 		if (getMouseInput() != null) {
@@ -227,18 +280,6 @@ public abstract class Screen {
 			return true;
 		}	
 		return false;
-	}
-	private Color getFPSTPSColor(int tps, int fps) {
-		double correctFPS = ((getGame().getFPS() != 0 ? getGame().getFPS() : 0.1) * 100) / getGame().getMaxFPS();
-		double correctTPS = ((getGame().getTPS() != 0 ? getGame().getTPS() : 0.1) * 100) / getGame().getMaxTPS();
-		int totalCorrect = (int) (((correctFPS + correctTPS) * 100) / 200);
-		int totalCorrectPorcent = ((255 * totalCorrect) / 100);
-		if (totalCorrectPorcent < 0) { // el porcentage puede superar el 100% si los fps o tps son mayores que el maximo
-			totalCorrectPorcent = 0;
-		} else if (totalCorrectPorcent > 255) { // lo mismo que los fps pero con los tps xd
-			totalCorrectPorcent = 255;
-		}
-		return new Color(255 - totalCorrectPorcent, totalCorrectPorcent, 0, 200);
 	}
 	public GameLocation getMouseLocation() {
 		return mouseLoc;

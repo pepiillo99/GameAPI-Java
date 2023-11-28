@@ -36,18 +36,22 @@ public abstract class Animation extends GameObject {
 				g.setColor(Utils.random.nextBoolean() ? Color.PINK : Color.GREEN);
 				g.fillRect((int) getX(), (int) getY(), (int) getDimension().getX(), (int) getDimension().getY());
 			}
-			if (timer - System.currentTimeMillis() <= 0) {
-				timer = durationPerFotogram + System.currentTimeMillis();
-				pos++;
-				if (pos >= textures.length) {
-					if (bucle) {
-						pos = 0;
-					} else {
-						finish = true;
-						onFinish();
-					}
+		}
+	}
+	@Override
+	public void renderTick() {
+		if (timer - System.currentTimeMillis() <= 0) {
+			timer = durationPerFotogram + System.currentTimeMillis();
+			pos++;
+			if (pos >= textures.length) {
+				if (bucle) {
+					pos = 0;
+				} else {
+					finish = true;
+					onFinish();
 				}
 			}
+			needRender = true;
 		}
 	}
 	public void setBucle(boolean bucle) {

@@ -27,6 +27,7 @@ import me.pepe.GameAPI.Utils.GameLocation;
 import me.pepe.GameAPI.Utils.LabelAligment;
 import me.pepe.GameAPI.Utils.LabelPart;
 import me.pepe.GameAPI.Utils.ObjectDimension;
+import me.pepe.GameAPI.Utils.RenderOption;
 import me.pepe.GameAPI.Utils.InteligentPositions.InteligentPosition;
 import me.pepe.GameAPI.Utils.InteligentDimensions.ExtendInteligentDimension;
 import me.pepe.GameAPI.Utils.InteligentDimensions.InteligentDimension;
@@ -49,6 +50,7 @@ public abstract class GameObject {
 	private int intPostOffSetX = 0;
 	private int intPostOffSetY = 0;	
 	private InteligentDimension intDim;
+	protected boolean needRender = true;
 	public GameObject(GameLocation gameLocation, Screen Screen, ObjectDimension dimension) {
 		this(null, gameLocation, Screen, dimension);
 	}
@@ -192,11 +194,21 @@ public abstract class GameObject {
 		this.windowsPassable = windowsPassable;
 	}
 	public abstract void tick();
+	public void renderTick() {}
 	public void internalRender(Graphics g) {
 		if (hasInteligence()) {
 			calcInteligence();
 		}
 		render(g);
+		if (getScreen().getRenderOption().equals(RenderOption.WHEN_NEED)) {
+			needRender = false;
+		}
+	}
+	public boolean needRender() {
+		return needRender;
+	}
+	public void setNeedRender(boolean needRender) {
+		this.needRender = needRender;
 	}
 	public abstract void render(Graphics g);
 	public void onScreen() {}

@@ -82,6 +82,7 @@ public class LoadingBar extends GameObject {
 			porcent = 0;
 		}
 		this.porcent = porcent;
+		needRender = true;
 	}
 	public boolean isShowPorcent() {
 		return showPorcent;

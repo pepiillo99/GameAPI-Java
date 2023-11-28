@@ -61,6 +61,7 @@ public abstract class SelectBox extends GameObject {
 	public void select(boolean selected) {
 		this.selected = selected;
 		onSelect(selected);
+		needRender = true;
 	}
 	public abstract void onSelect(boolean selected);
 	public abstract void onOver();
